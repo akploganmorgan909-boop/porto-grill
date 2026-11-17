@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Espace serveur | Porto Grill</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#16120f">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- equipe.css et patron.css : couleurs, en-tête, onglets, cartes (communs à tous les espaces) -->
+  <link rel="stylesheet" href="equipe.css">
+  <link rel="stylesheet" href="patron.css">
+  <link rel="stylesheet" href="serveur.css">
+  <link rel="stylesheet" href="aide.css">
+</head>
+
+<body class="app" data-aide="serveur">
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <p class="brand"><span class="flame flame-small" aria-hidden="true"></span> Porto Grill <span class="brand-role">Serveur</span></p>
+      <p class="topbar-user"><span id="userName">...</span>
+        <button class="btn btn-ghost btn-small" type="button" id="logout">Déconnexion</button>
+      </p>
+    </div>
+    <nav class="tabs" aria-label="Sections de l’espace serveur">
+      <button class="tab is-active" type="button" data-tab="nouvelle" aria-pressed="true">Nouvelle commande</button>
+      <button class="tab" type="button" data-tab="commandes" aria-pressed="false">Mes commandes <span class="count" id="compteur" hidden></span></button>
+    </nav>
+  </header>
+
+  <main class="page">
+
+    <!-- ========== NOUVELLE COMMANDE ========== -->
+    <section class="panel" id="tab-nouvelle" aria-labelledby="t-nouvelle">
+      <h1 id="t-nouvelle">Nouvelle commande</h1>
+
+      <h2 class="step-title">Table</h2>
+      <div id="tablesGrid" class="tables-grid" role="group" aria-label="Choisir la table"></div>
+      <div class="add-table">
+        <input type="text" id="nomNouvelleTable" maxlength="30" placeholder="Nouvelle table ou client (ex. : Table 7)" aria-label="Nom de la nouvelle table ou du client">
+        <select id="zoneNouvelleTable" aria-label="Zone de la table">
+          <option value="salle">Salle</option><option value="terrasse">Terrasse</option>
+          <option value="bar">Bar</option><option value="vip">VIP / Salon</option>
+        </select>
+        <button class="btn btn-ghost" type="button" id="ajouterTable">Ouvrir cette table</button>
+        <button class="btn btn-danger" type="button" id="retirerTable" hidden>Retirer la table choisie</button>
+      </div>
+
+      <h2 class="step-title">Ce que le client commande</h2>
+      <p class="aide">Écrivez le plat et le prix lus sur la brochure, puis touchez « Ajouter ».</p>
+      <div class="libre">
+        <input type="text" id="nomLibre" list="suggestions" maxlength="80" placeholder="Plat (ex. : pommes frites + poulet)" aria-label="Nom du plat">
+        <datalist id="suggestions"></datalist>
+        <input type="number" id="prixLibre" inputmode="numeric" min="0" max="1000000" step="50" placeholder="Prix en F" aria-label="Prix unitaire en francs">
+        <input type="number" id="qteLibre" inputmode="numeric" min="1" max="50" value="1" aria-label="Quantité">
+        <button class="btn btn-primary" type="button" id="ajouterLibre">Ajouter</button>
+      </div>
+      <ul id="listeLibres" class="libres"></ul>
+
+      <details class="catalogue">
+        <summary>Plats déjà enregistrés (facultatif)</summary>
+        <input type="search" id="recherchePlat" class="search-plat" placeholder="Chercher un plat (ex. : riz)" aria-label="Chercher un plat">
+      <div id="chips" class="chips" role="group" aria-label="Filtrer les plats par catégorie"></div>
+      <div id="menuPlats" class="plat-grid"></div>
+      </details>
+
+      <div class="field note-field">
+        <label for="noteCommande">Note pour la cuisine (facultatif)</label>
+        <input type="text" id="noteCommande" maxlength="300" placeholder="Ex. : sans piment, bien cuit">
+      </div>
+    </section>
+
+    <!-- ========== MES COMMANDES ========== -->
+    <section class="panel" id="tab-commandes" aria-labelledby="t-commandes" hidden>
+      <h1 id="t-commandes">Mes commandes du jour</h1>
+      <div id="listeCommandes"></div>
+    </section>
+
+  </main>
+
+  <!-- Barre du panier (visible pendant la prise de commande) -->
+  <div class="cart-bar" id="cartBar">
+    <p class="cart-resume" id="cartResume">Panier vide</p>
+    <button class="btn btn-primary" type="button" id="envoyer" disabled>Envoyer à la cuisine</button>
+  </div>
+
+  <p class="toast" id="toast" role="status" aria-live="polite" hidden></p>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.1/dist/umd/supabase.js"></script>
+  <script src="config.js"></script>
+  <script src="commun.js"></script>
+  <script src="serveur.js"></script>
+  <script src="aide.js"></script>
+</body>
+</html>

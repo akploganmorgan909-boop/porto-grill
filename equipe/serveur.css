@@ -1,0 +1,140 @@
+/* =========================================================
+   PORTO GRILL - Espace serveur : style
+   S'ajoute à equipe.css et patron.css.
+   Pensé pour le téléphone : gros boutons faciles à toucher.
+   Sommaire
+   1. Titres et tables   2. Plats et panier   3. Mes commandes
+   ========================================================= */
+
+
+/* =========================================================
+   1. TITRES ET TABLES
+   ========================================================= */
+.step-title { margin: 1.5rem 0 0.75rem; font-family: var(--font-title); font-size: 1.2rem; color: var(--cuivre); }
+.count {
+  display: inline-block; min-width: 1.4rem; padding: 0 0.4rem; margin-left: 0.3rem;
+  border-radius: 999px; background: var(--braise); color: #fff; font-size: 0.8rem; text-align: center;
+}
+
+.tables-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(6.5rem, 1fr)); gap: 0.6rem; }
+.table-btn {
+  display: grid; gap: 0.1rem; min-height: 4.2rem; padding: 0.6rem; text-align: center;
+  background: var(--charbon-2); border: 2px solid rgba(246, 237, 224, 0.2); border-radius: var(--radius); color: var(--creme);
+  transition: border-color 0.2s, background-color 0.2s;
+}
+.table-btn strong { font-family: var(--font-title); font-size: 1.3rem; }
+.table-btn span { font-size: 0.8rem; color: var(--creme-doux); }
+.table-btn:hover { border-color: var(--cuivre); }
+.table-btn.is-selected { background: var(--braise); border-color: var(--braise); }
+.table-btn.is-selected span { color: #fff; }
+
+
+/* =========================================================
+   2. PLATS ET PANIER
+   ========================================================= */
+.chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+.chip {
+  min-height: 2.75rem; padding: 0 1rem; border-radius: 999px; background: transparent;
+  border: 1.5px solid rgba(246, 237, 224, 0.3); color: var(--creme); font-weight: 500;
+}
+.chip[aria-pressed="true"] { background: var(--cuivre); border-color: var(--cuivre); color: var(--charbon); }
+
+.plat-grid { display: grid; gap: 0.6rem; }
+.plat-card {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.85rem 1rem;
+  background: var(--charbon-2); border: 1.5px solid rgba(246, 237, 224, 0.12); border-radius: var(--radius);
+}
+.plat-card.is-in { border-color: var(--braise); }
+.plat-card .plat-nom { font-size: 1.1rem; }
+.plat-prix { margin: 0.1rem 0 0; color: var(--cuivre); font-weight: 600; }
+
+.stepper { display: flex; align-items: center; gap: 0.6rem; }
+.step {
+  width: 3rem; height: 3rem; border-radius: 50%; background: var(--charbon-3); border: 1.5px solid rgba(246, 237, 224, 0.35);
+  color: var(--creme); font-size: 1.5rem; line-height: 1;
+}
+.step:hover { background: var(--braise); border-color: var(--braise); }
+.qte { min-width: 1.6rem; text-align: center; font-size: 1.15rem; font-weight: 700; }
+
+.add-table { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.9rem; max-width: 36rem; }
+.add-table input, .search-plat {
+  flex: 1 1 14rem; min-height: 3rem; padding: 0 0.9rem; background: var(--charbon-2);
+  border: 1.5px solid #8a7d6f; border-radius: var(--radius); color: var(--creme); font: inherit;
+}
+.search-plat { display: block; width: 100%; max-width: 36rem; margin-bottom: 0.8rem; }
+.add-table input:focus, .search-plat:focus { outline: 3px solid var(--cuivre); outline-offset: 1px; border-color: var(--cuivre); }
+.recap { margin-bottom: 1rem; padding: 0.9rem 1.1rem; background: var(--charbon-3); border: 1.5px solid var(--cuivre); border-radius: var(--radius); }
+.recap-titre { margin: 0 0 0.4rem; font-family: var(--font-title); color: var(--cuivre); font-weight: 700; }
+.recap-ligne { margin: 0.15rem 0; font-weight: 600; }
+
+.aide { margin: 0 0 0.7rem; color: var(--creme-doux); font-size: 0.95rem; }
+.libre { display: grid; grid-template-columns: 1fr 7rem 4.5rem; gap: 0.6rem; max-width: 40rem; }
+.libre input {
+  min-height: 3rem; padding: 0 0.9rem; min-width: 0; background: var(--charbon-2);
+  border: 1.5px solid #8a7d6f; border-radius: var(--radius); color: var(--creme); font: inherit;
+}
+.libre input:focus { outline: 3px solid var(--cuivre); outline-offset: 1px; border-color: var(--cuivre); }
+.libre #nomLibre { grid-column: 1 / -1; }
+.libre .btn { grid-column: 1 / -1; min-height: 3rem; }
+.libres { margin: 0.8rem 0 0; padding: 0; list-style: none; max-width: 40rem; }
+.libre-ligne {
+  display: flex; align-items: center; justify-content: space-between; gap: 0.8rem; margin-bottom: 0.5rem;
+  padding: 0.6rem 0.9rem; background: var(--charbon-2); border: 1.5px solid var(--braise); border-radius: var(--radius); font-weight: 600;
+}
+.catalogue { margin-top: 1.4rem; }
+.catalogue summary { min-height: 2.75rem; display: flex; align-items: center; cursor: pointer; color: var(--cuivre); font-weight: 600; }
+.catalogue[open] summary { margin-bottom: 0.8rem; }
+
+.note-field { margin-top: 1.5rem; max-width: 36rem; }
+.page { padding-bottom: 8rem; }
+
+.cart-bar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.8rem 1rem;
+  background: var(--charbon-2); border-top: 1px solid rgba(246, 237, 224, 0.2); box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.4);
+}
+.cart-bar[hidden] { display: none; }
+.cart-resume { margin: 0; font-weight: 600; line-height: 1.3; }
+.cart-resume small { display: block; color: var(--creme-doux); font-weight: 400; }
+
+
+/* =========================================================
+   3. MES COMMANDES
+   ========================================================= */
+.order { margin-bottom: 0.9rem; padding: 1rem 1.1rem; background: var(--charbon-2); border: 1px solid rgba(246, 237, 224, 0.12); border-radius: var(--radius); }
+.order-head { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin-bottom: 0.6rem; }
+.order-title { margin: 0; font-family: var(--font-title); font-size: 1.2rem; font-weight: 700; }
+.order-time { margin: 0; font-size: 0.88rem; color: var(--creme-doux); }
+.order ul { margin: 0 0 0.6rem; padding: 0; list-style: none; }
+.order li { display: flex; justify-content: space-between; gap: 1rem; padding: 0.25rem 0; border-bottom: 1px dashed rgba(246, 237, 224, 0.12); }
+.order-note { margin: 0 0 0.6rem; font-size: 0.92rem; color: var(--cuivre); }
+.order-total { margin: 0 0 0.75rem; font-weight: 700; }
+.order-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+.order select { min-height: 2.5rem; padding: 0 0.6rem; background: var(--charbon); border: 1.5px solid #8a7d6f; border-radius: var(--radius); color: var(--creme); }
+
+.st { display: inline-block; padding: 0.1rem 0.7rem; border-radius: 999px; font-size: 0.82rem; font-weight: 600; white-space: nowrap; }
+.st-envoyee { background: rgba(224, 178, 102, 0.18); color: var(--cuivre); }
+.st-en_preparation { background: rgba(255, 138, 115, 0.18); color: var(--rouge); }
+.st-prete { background: rgba(63, 182, 115, 0.2); color: #8be0ae; }
+.st-servie { background: rgba(246, 237, 224, 0.12); color: var(--creme-doux); }
+.st-annulee { background: rgba(246, 237, 224, 0.08); color: #9a8f82; text-decoration: line-through; }
+
+@media (min-width: 700px) {
+  .plat-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1000px) {
+  .plat-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+.zone-titre { grid-column: 1 / -1; margin: 0.6rem 0 0; font-family: var(--font-title); font-size: 1.05rem; color: var(--cuivre); }
+.add-table select {
+  min-height: 3rem; padding: 0 0.7rem; background: var(--charbon-2); border: 1.5px solid #8a7d6f;
+  border-radius: var(--radius); color: var(--creme); font: inherit;
+}
+
+.note-table { margin-bottom: 1.2rem; padding: 1.1rem 1.2rem; background: var(--charbon-2); border: 2px solid var(--cuivre); border-radius: var(--radius); }
+.note-table h3 { margin: 0; font-family: var(--font-title); font-size: 1.5rem; }
+.note-table ul { margin: 0.6rem 0; padding: 0; list-style: none; }
+.note-table li { display: flex; justify-content: space-between; gap: 1rem; padding: 0.4rem 0; border-bottom: 1px solid #3a322b; font-weight: 600; }
+.note-table li small { color: var(--creme-doux); font-weight: 400; }
+.note-total { margin: 0.6rem 0; font-family: var(--font-title); font-size: 1.5rem; color: var(--cuivre); font-weight: 700; }

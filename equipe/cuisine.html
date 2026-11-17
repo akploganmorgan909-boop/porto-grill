@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Espace cuisine | Porto Grill</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#16120f">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="equipe.css">
+  <link rel="stylesheet" href="patron.css">
+  <link rel="stylesheet" href="cuisine.css">
+  <link rel="stylesheet" href="aide.css">
+</head>
+
+<body class="app" data-aide="cuisine">
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <p class="brand"><span class="flame flame-small" aria-hidden="true"></span> Porto Grill <span class="brand-role">Cuisine</span></p>
+      <p class="topbar-user"><span id="userName">...</span>
+        <button class="btn btn-ghost btn-small" type="button" id="logout">Déconnexion</button>
+      </p>
+    </div>
+    <nav class="tabs" aria-label="Sections de l’espace cuisine">
+      <button class="tab is-active" type="button" data-tab="tickets" aria-pressed="true">Commandes <span class="count" id="compteur" hidden></span></button>
+      <button class="tab" type="button" data-tab="reservations" aria-pressed="false">Réservations du jour</button>
+    </nav>
+  </header>
+
+  <main class="page">
+
+    <!-- Le navigateur bloque le son tant qu'on n'a pas touché l'écran une fois -->
+    <button class="btn btn-primary btn-block sound-banner" type="button" id="activerSon">🔊 Touchez ici pour activer le son et garder l’écran allumé</button>
+
+    <!-- ========== COMMANDES EN DIRECT ========== -->
+    <section class="panel" id="tab-tickets" aria-labelledby="t-tickets">
+      <h1 id="t-tickets">Commandes en direct</h1>
+
+      <div class="prep" aria-labelledby="t-prep">
+        <h2 id="t-prep" class="step-title">Total à préparer maintenant</h2>
+        <div id="aPreparer" class="prep-list"></div>
+      </div>
+
+      <div id="tickets" class="tickets"></div>
+    </section>
+
+    <!-- ========== RÉSERVATIONS DU JOUR ========== -->
+    <section class="panel" id="tab-reservations" aria-labelledby="t-resa" hidden>
+      <h1 id="t-resa">Réservations du jour</h1>
+      <div id="listeResa" class="tickets"></div>
+    </section>
+
+  </main>
+
+  <p class="toast" id="toast" role="status" aria-live="polite" hidden></p>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.1/dist/umd/supabase.js"></script>
+  <script src="config.js"></script>
+  <script src="commun.js"></script>
+  <script src="cuisine.js"></script>
+  <script src="aide.js"></script>
+</body>
+</html>

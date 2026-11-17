@@ -1,0 +1,52 @@
+/* =========================================================
+   PORTO GRILL - Espace cuisine (grand format, lisible de loin)
+   ========================================================= */
+.sound-banner { min-height: 3.4rem; margin-bottom: 1.2rem; }
+.sound-banner[hidden] { display: none; }
+
+/* Total des plats à préparer */
+.prep { margin-bottom: 1.6rem; }
+.prep-list { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.prep-chip {
+  padding: 0.55rem 1rem; background: var(--charbon-3); border: 1.5px solid var(--cuivre);
+  border-radius: 999px; font-size: 1.2rem; font-weight: 600;
+}
+.prep-chip strong { color: var(--cuivre); font-family: var(--font-title); font-size: 1.4rem; margin-right: 0.3rem; }
+.vide { color: var(--creme-doux); font-size: 1.1rem; }
+
+/* Tickets */
+.tickets { display: grid; grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr)); gap: 1rem; align-items: start; }
+.ticket {
+  display: flex; flex-direction: column; gap: 0.7rem; padding: 1rem 1.1rem;
+  background: var(--charbon-2); border: 3px solid var(--vert); border-radius: var(--radius);
+}
+.ticket.attente-moyenne { border-color: var(--cuivre); }
+.ticket.attente-longue  { border-color: var(--rouge); }
+.ticket.est-prete { border-color: #5c5247; opacity: 0.75; }
+.ticket-tete { display: flex; align-items: baseline; justify-content: space-between; gap: 0.6rem; }
+.ticket-table { margin: 0; font-family: var(--font-title); font-size: 2rem; line-height: 1.1; }
+.ticket-minuteur { margin: 0; font-size: 1.5rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.attente-moyenne .ticket-minuteur { color: var(--cuivre); }
+.attente-longue .ticket-minuteur { color: var(--rouge); }
+.ticket-meta { margin: 0; color: var(--creme-doux); }
+.ticket-lignes { margin: 0; padding: 0; list-style: none; }
+.ticket-lignes li { padding: 0.35rem 0; border-bottom: 1px solid #3a322b; font-size: 1.35rem; font-weight: 600; }
+.ticket-lignes li:last-child { border-bottom: 0; }
+.ticket-lignes small { display: block; color: var(--cuivre); font-size: 1rem; font-weight: 500; }
+.ticket-note { margin: 0; padding: 0.5rem 0.7rem; background: var(--charbon-3); border-left: 4px solid var(--cuivre); font-size: 1.1rem; }
+.ticket-cloche { margin: 0; color: var(--rouge); font-weight: 700; font-size: 1.15rem; animation: clignote 1s ease-in-out infinite; }
+@keyframes clignote { 50% { opacity: 0.35; } }
+@media (prefers-reduced-motion: reduce) { .ticket-cloche { animation: none; } }
+.ticket-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.ticket-actions .btn { flex: 1 1 8rem; min-height: 3.6rem; font-size: 1.15rem; }
+
+/* Réservations */
+.resa { padding: 1rem 1.1rem; background: var(--charbon-2); border: 1.5px solid var(--cuivre); border-radius: var(--radius); }
+.resa-heure { margin: 0; font-family: var(--font-title); font-size: 1.8rem; color: var(--cuivre); }
+.resa p { margin: 0.2rem 0; font-size: 1.1rem; }
+
+.ticket-zone { align-self: flex-start; margin: 0; padding: 0.2rem 0.8rem; border-radius: 999px; font-weight: 700; font-size: 1.05rem; background: var(--charbon-3); border: 2px solid var(--creme-doux); }
+.ticket-zone:empty { display: none; }
+.ticket-zone.zone-vip { background: var(--cuivre); color: var(--charbon); border-color: var(--cuivre); }
+.ticket-zone.zone-terrasse { border-color: var(--vert); color: #8be0ae; }
+.ticket-zone.zone-bar { border-color: var(--braise); color: var(--rouge); }
