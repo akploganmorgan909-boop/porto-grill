@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Espace patron | Porto Grill</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#16120f">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="equipe.css">
+  <link rel="stylesheet" href="patron.css">
+  <link rel="stylesheet" href="aide.css">
+</head>
+
+<body class="app" data-aide="patron">
+
+  <!-- ========== EN-TÊTE ========== -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <p class="brand"><span class="flame flame-small" aria-hidden="true"></span> Porto Grill <span class="brand-role">Patron</span></p>
+      <p class="topbar-user"><span id="userName">...</span>
+        <button class="btn btn-ghost btn-small" type="button" id="logout">Déconnexion</button>
+      </p>
+    </div>
+    <nav class="tabs" aria-label="Sections de l’espace patron">
+      <button class="tab is-active" type="button" data-tab="tableau" aria-pressed="true">Tableau de bord</button>
+      <button class="tab" type="button" data-tab="menu" aria-pressed="false">Menu et prix</button>
+      <button class="tab" type="button" data-tab="tables" aria-pressed="false">Tables</button>
+    </nav>
+  </header>
+
+  <main class="page">
+
+    <!-- ========== TABLEAU DE BORD ========== -->
+    <section class="panel" id="tab-tableau" aria-labelledby="t-tableau">
+      <h1 id="t-tableau">Tableau de bord <span class="date-jour" id="dateJour"></span></h1>
+
+      <div id="clotures-jours" class="cloture-liste"></div>
+
+      <div class="kpis">
+        <div class="kpi"><p class="kpi-label">Ventes du jour</p><p class="kpi-value" id="kpiVentes">0 F</p></div>
+        <div class="kpi"><p class="kpi-label">Déjà encaissé</p><p class="kpi-value" id="kpiEncaisse">0 F</p></div>
+        <div class="kpi"><p class="kpi-label">Commandes</p><p class="kpi-value" id="kpiCommandes">0</p></div>
+        <div class="kpi"><p class="kpi-label">Panier moyen</p><p class="kpi-value" id="kpiPanier">0 F</p></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h2>Ventes des 7 derniers jours</h2>
+          <div id="graph" class="graph" role="img" aria-label="Graphique des ventes des 7 derniers jours"></div>
+        </div>
+        <div class="card">
+          <h2>Plats les plus vendus aujourd’hui</h2>
+          <ol class="top-list" id="topPlats"></ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== MENU ET PRIX ========== -->
+    <section class="panel" id="tab-menu" aria-labelledby="t-menu" hidden>
+      <h1 id="t-menu">Menu et prix</h1>
+      <p class="intro">Les serveurs voient ces plats et ces prix. La cuisine voit les plats, jamais les prix. Chaque changement de prix est noté dans un historique.</p>
+
+      <form class="card form-inline" id="formPlat" novalidate>
+        <h2>Ajouter un plat</h2>
+        <div class="field"><label for="platNom">Nom du plat</label><input type="text" id="platNom" required></div>
+        <div class="field"><label for="platCategorie">Catégorie</label>
+          <select id="platCategorie" required>
+            <option value="beninois">Cuisine béninoise</option>
+            <option value="grillades">Grillades</option>
+            <option value="francais">Plats français</option>
+            <option value="partager">À partager</option>
+            <option value="desserts">Desserts</option>
+            <option value="boissons">Boissons</option>
+          </select>
+        </div>
+        <div class="field"><label for="platPrix">Prix (F CFA)</label><input type="number" id="platPrix" min="0" step="50" inputmode="numeric" required></div>
+        <div class="field field-wide"><label for="platDescription">Description (facultatif)</label><input type="text" id="platDescription"></div>
+        <button class="btn btn-primary" type="submit">Ajouter</button>
+      </form>
+
+      <div id="listePlats" class="plats"></div>
+    </section>
+
+    <!-- ========== TABLES ========== -->
+    <section class="panel" id="tab-tables" aria-labelledby="t-tables" hidden>
+      <h1 id="t-tables">Tables de la salle</h1>
+      <p class="intro">Les serveurs choisissent une de ces tables en prenant une commande.</p>
+
+      <form class="card form-inline" id="formTable" novalidate>
+        <h2>Ajouter une table</h2>
+        <div class="field"><label for="tableNom">Nom ou numéro</label><input type="text" id="tableNom" placeholder="Ex. : 1, T2, Terrasse 3" required></div>
+        <div class="field"><label for="tablePlaces">Places</label><input type="number" id="tablePlaces" min="1" max="60" value="4" inputmode="numeric" required></div>
+        <div class="field"><label for="tableZone">Zone</label>
+          <select id="tableZone">
+            <option value="salle">Salle</option>
+            <option value="terrasse">Terrasse</option>
+            <option value="bar">Bar</option>
+            <option value="vip">VIP</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" type="submit">Ajouter</button>
+      </form>
+
+      <div id="listeTables" class="tables"></div>
+    </section>
+
+  </main>
+
+  <!-- Messages (succès ou erreur) -->
+  <p class="toast" id="toast" role="status" aria-live="polite" hidden></p>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.1/dist/umd/supabase.js"></script>
+  <script src="config.js"></script>
+  <script src="commun.js"></script>
+  <script src="patron.js"></script>
+  <script src="aide.js"></script>
+</body>
+</html>

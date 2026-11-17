@@ -1,0 +1,29 @@
+/* =========================================================
+   PORTO GRILL - Centre d'aide (bouton "?" et fenêtre)
+   ========================================================= */
+.aide-btn {
+  position: fixed; z-index: 80; right: 1rem; bottom: 1rem; width: 3.2rem; height: 3.2rem; border-radius: 50%;
+  border: 2px solid var(--cuivre); background: var(--charbon-2); color: var(--cuivre); cursor: pointer;
+  font-family: var(--font-title); font-size: 1.6rem; font-weight: 700; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+}
+.aide-btn:focus-visible { outline: 3px solid var(--creme); outline-offset: 2px; }
+body[data-aide="serveur"] .aide-btn { bottom: 7rem; }   /* au-dessus de la barre du panier */
+
+.aide-dialog {
+  width: min(42rem, calc(100vw - 1.5rem)); max-height: 88vh; padding: 1.2rem 1.3rem; overflow: auto;
+  background: var(--charbon); color: var(--creme); border: 2px solid var(--cuivre); border-radius: var(--radius);
+}
+.aide-dialog::backdrop { background: rgba(0, 0, 0, 0.7); }
+.aide-tete { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.aide-tete h2 { margin: 0; font-family: var(--font-title); font-size: 1.5rem; }
+.aide-dialog h3 { margin: 1.2rem 0 0.5rem; color: var(--cuivre); font-family: var(--font-title); }
+.aide-choix { margin-top: 0.8rem; }
+.aide-choix select { min-height: 2.8rem; padding: 0 0.7rem; width: 100%; background: var(--charbon-2); color: var(--creme); border: 1.5px solid #8a7d6f; border-radius: var(--radius); font: inherit; }
+.aide-etapes { margin: 0; padding-left: 1.3rem; }
+.aide-etapes li { margin-bottom: 0.6rem; line-height: 1.45; }
+.aide-q { margin-bottom: 0.5rem; background: var(--charbon-2); border-radius: var(--radius); }
+.aide-q summary { min-height: 2.9rem; display: flex; align-items: center; padding: 0 0.9rem; cursor: pointer; font-weight: 600; }
+.aide-q p { margin: 0; padding: 0 0.9rem 0.9rem; line-height: 1.45; color: var(--creme-doux); }
+
+.aide-etapes-int { padding: 0 0.9rem 0.9rem 2.2rem; }
+.aide-sql { margin: 0.5rem 0; padding: 0.7rem 0.8rem; overflow-x: auto; background: #0e0b09; border: 1px solid #3a322b; border-radius: var(--radius); color: var(--cuivre); font-size: 0.85rem; white-space: pre-wrap; word-break: break-word; }

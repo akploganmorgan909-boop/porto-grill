@@ -1,0 +1,159 @@
+/* =========================================================
+   PORTO GRILL - Espace équipe : style commun
+   Sommaire
+   1. Variables   2. Base   3. Boutons et champs   4. Messages
+   5. Page de connexion   6. Mouvement réduit
+   ========================================================= */
+
+
+/* =========================================================
+   1. VARIABLES
+   ========================================================= */
+:root {
+  --charbon: #16120f;
+  --charbon-2: #211b17;
+  --charbon-3: #2d2520;
+  --creme: #f6ede0;
+  --creme-doux: #d6cbbb;
+  --braise: #c8401a;
+  --braise-fonce: #a93412;
+  --cuivre: #e0b266;
+  --vert: #3fb673;
+  --rouge: #ff8a73;
+
+  --font-title: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-text: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --radius: 10px;
+}
+
+
+/* =========================================================
+   2. BASE
+   ========================================================= */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-text);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  color: var(--creme);
+  background: var(--charbon);
+}
+
+h1 { margin: 0 0 0.5rem; font-family: var(--font-title); font-size: 2rem; line-height: 1.15; }
+p { margin: 0 0 1rem; }
+a { color: inherit; }
+button, input { font: inherit; color: inherit; }
+button { cursor: pointer; }
+[hidden] { display: none !important; }
+
+:focus-visible { outline: 3px solid var(--cuivre); outline-offset: 3px; }
+
+
+/* =========================================================
+   3. BOUTONS ET CHAMPS
+   ========================================================= */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 3rem; padding: 0.7rem 1.5rem;
+  border: 2px solid transparent; border-radius: 999px;
+  font-weight: 600; text-decoration: none;
+  transition: background-color 0.2s, transform 0.2s;
+}
+.btn:active { transform: translateY(1px); }
+.btn-primary { background: var(--braise); color: #fff; }
+.btn-primary:hover { background: var(--braise-fonce); }
+.btn-block { width: 100%; }
+.btn:disabled { opacity: 0.6; cursor: wait; }
+
+.field { margin-bottom: 1.1rem; }
+.field label { display: block; margin-bottom: 0.35rem; font-weight: 600; font-size: 0.95rem; }
+.field input {
+  width: 100%; min-height: 3.1rem; padding: 0.7rem 0.9rem;
+  background: var(--charbon); border: 1.5px solid #8a7d6f; border-radius: var(--radius);
+}
+.field input:focus { outline: 3px solid var(--cuivre); outline-offset: 1px; border-color: var(--cuivre); }
+
+.password-wrap { position: relative; }
+.password-wrap input { padding-right: 6rem; }
+.password-toggle {
+  position: absolute; top: 50%; right: 0.5rem; transform: translateY(-50%);
+  min-height: 2.5rem; padding: 0 0.8rem; background: transparent; border: 0; color: var(--cuivre); font-weight: 600;
+}
+
+
+/* =========================================================
+   4. MESSAGES
+   ========================================================= */
+.alert {
+  margin: 0 0 1rem; padding: 0.8rem 1rem; border-radius: var(--radius);
+  background: rgba(255, 138, 115, 0.12); border: 1px solid var(--rouge); color: var(--rouge);
+}
+.alert-ok { background: rgba(63, 182, 115, 0.12); border-color: var(--vert); color: #8be0ae; }
+
+
+/* =========================================================
+   5. PAGE DE CONNEXION
+   ========================================================= */
+.login { display: grid; min-height: 100vh; }
+
+.login-brand {
+  position: relative; display: grid; place-items: center; overflow: hidden;
+  padding: 2.5rem 1.5rem;
+  background: radial-gradient(circle at 30% 80%, #4a1d0f 0%, var(--charbon) 65%);
+}
+.login-brand-inner { position: relative; text-align: center; }
+.login-brand-name { margin: 0.6rem 0 0; font-family: var(--font-title); font-size: clamp(2.2rem, 7vw, 3.6rem); font-weight: 700; line-height: 1.1; }
+.login-brand-tag { margin: 0.4rem 0 0; color: var(--cuivre); font-size: 1.1rem; letter-spacing: 0.04em; }
+
+.flame {
+  display: inline-block; width: 1.6rem; height: 2.5rem;
+  background: linear-gradient(to top, var(--braise), var(--cuivre));
+  border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%;
+  transform-origin: bottom center; animation: flicker 1.8s ease-in-out infinite;
+}
+
+.embers { position: absolute; inset: 0; pointer-events: none; }
+.embers span {
+  position: absolute; bottom: -10px; width: 5px; height: 5px; border-radius: 50%;
+  background: #ff7a4d; box-shadow: 0 0 10px 2px rgba(255, 122, 77, 0.6); opacity: 0;
+  animation: ember 9s linear infinite;
+}
+.embers span:nth-child(1) { left: 12%; animation-delay: 0s; }
+.embers span:nth-child(2) { left: 28%; animation-delay: 2s; animation-duration: 11s; }
+.embers span:nth-child(3) { left: 46%; animation-delay: 4s; }
+.embers span:nth-child(4) { left: 63%; animation-delay: 1s; animation-duration: 10s; }
+.embers span:nth-child(5) { left: 79%; animation-delay: 3s; }
+.embers span:nth-child(6) { left: 92%; animation-delay: 5s; animation-duration: 12s; }
+
+.login-panel { display: grid; place-items: center; padding: 2rem 1.25rem 3rem; }
+.login-card { width: min(26rem, 100%); }
+.login-intro { color: var(--creme-doux); margin-bottom: 1.5rem; }
+.login-help { margin: 1.25rem 0 0.4rem; font-size: 0.92rem; color: var(--creme-doux); }
+.login-back { font-size: 0.92rem; color: var(--cuivre); }
+
+@media (min-width: 860px) {
+  .login { grid-template-columns: 1.1fr 1fr; }
+  .login-brand { padding: 3rem; }
+}
+
+@keyframes flicker {
+  0%, 100% { transform: scale(1) rotate(-2deg); }
+  30% { transform: scale(1.08, 1.15) rotate(2deg); }
+  60% { transform: scale(0.96, 1.05) rotate(-1deg); }
+}
+@keyframes ember {
+  0% { opacity: 0; transform: translate(0, 0) scale(1); }
+  10% { opacity: 1; }
+  100% { opacity: 0; transform: translate(30px, -70vh) scale(0.3); }
+}
+
+
+/* =========================================================
+   6. MOUVEMENT RÉDUIT
+   ========================================================= */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}

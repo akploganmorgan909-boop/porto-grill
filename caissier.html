@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Espace caisse | Porto Grill</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#16120f">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="equipe.css">
+  <link rel="stylesheet" href="patron.css">
+  <link rel="stylesheet" href="caissier.css">
+  <link rel="stylesheet" href="aide.css">
+</head>
+<body class="app" data-aide="caissier">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <p class="brand"><span class="flame flame-small" aria-hidden="true"></span> Porto Grill <span class="brand-role">Caisse</span></p>
+      <p class="topbar-user"><span id="userName">...</span>
+        <button class="btn btn-ghost btn-small" type="button" id="logout">Déconnexion</button>
+      </p>
+    </div>
+    <nav class="tabs" aria-label="Sections de l’espace caisse">
+      <button class="tab is-active" type="button" data-tab="point" aria-pressed="true">Point de caisse</button>
+      <button class="tab" type="button" data-tab="transactions" aria-pressed="false">Transactions <span class="count" id="compteur" hidden></span></button>
+    </nav>
+  </header>
+
+  <main class="page">
+    <div class="jour-bar">
+      <label for="jour">Journée de service</label>
+      <input type="date" id="jour">
+      <p class="aide" id="jourAide"></p>
+    </div>
+
+    <!-- ========== POINT DE CAISSE ========== -->
+    <section class="panel" id="tab-point" aria-labelledby="t-point">
+      <h1 id="t-point">Point de caisse</h1>
+      <div class="kpis" id="kpis"></div>
+      <h2 class="step-title">Par serveur : l’argent à recevoir</h2>
+      <div id="serveurs" class="serveurs"></div>
+      <h2 class="step-title">Fin de service</h2>
+      <div id="finJournee" class="fin-journee"></div>
+    </section>
+
+    <!-- ========== TRANSACTIONS ========== -->
+    <section class="panel" id="tab-transactions" aria-labelledby="t-trans" hidden>
+      <h1 id="t-trans">Toutes les transactions</h1>
+      <div class="filtre"><label for="filtreServeur">Serveur</label><select id="filtreServeur"><option value="">Tous</option></select></div>
+      <div id="transactions" class="transactions"></div>
+    </section>
+  </main>
+
+  <p class="toast" id="toast" role="status" aria-live="polite" hidden></p>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.1/dist/umd/supabase.js"></script>
+  <script src="config.js"></script>
+  <script src="commun.js"></script>
+  <script src="caissier.js"></script>
+  <script src="aide.js"></script>
+</body>
+</html>

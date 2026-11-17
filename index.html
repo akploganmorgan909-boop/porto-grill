@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Le contenu reste visible sans JavaScript : la classe "js" n'est ajoutée que si le script fonctionne -->
+  <script>
+    document.documentElement.classList.add("js");
+    setTimeout(function () {
+      if (!window.portoGrillReady) { document.documentElement.classList.remove("js"); }
+    }, 4000);
+  </script>
+
+  <!-- ========== SEO ET RÉSEAUX SOCIAUX ========== -->
+  <title>Porto Grill | Restaurant-bar à Porto-Novo</title>
+  <meta name="description" content="Porto Grill, restaurant-bar à Porto-Novo (Bénin) : ambiance décontractée, grand choix de bières, plats à partager, parking gratuit. Horaires, menu d’exemples et contact.">
+  <meta name="theme-color" content="#16120f">
+
+  <!-- À REMPLACER quand le nom de domaine est connu -->
+  <link rel="canonical" href="https://VOTRE-DOMAINE.example/">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="fr_FR">
+  <meta property="og:site_name" content="Porto Grill">
+  <meta property="og:title" content="Porto Grill | Restaurant-bar à Porto-Novo">
+  <meta property="og:description" content="Restaurant-bar à Porto-Novo : bières, plats à partager, ambiance décontractée.">
+  <meta property="og:url" content="https://VOTRE-DOMAINE.example/">
+  <meta property="og:image" content="https://VOTRE-DOMAINE.example/images/ambiance.jpg">
+
+  <!-- Polices Google Fonts : facultatives, le site a des polices de secours dans le CSS -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Données structurées : uniquement des informations communiquées (ni note, ni prix, ni menu officiel) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Restaurant",
+    "name": "Porto Grill",
+    "telephone": "01 61 18 37 16",
+    "acceptsReservations": true,
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Bd du Cinquantenaire",
+      "addressLocality": "Porto-Novo",
+      "addressCountry": "BJ"
+    },
+    "openingHoursSpecification": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Tuesday", "Wednesday", "Thursday", "Friday"],
+        "opens": "12:00",
+        "closes": "00:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Saturday", "Sunday"],
+        "opens": "09:30",
+        "closes": "00:30"
+      }
+    ]
+  }
+  </script>
+</head>
+
+<body>
+  <a class="skip-link" href="#contenu">Aller au contenu</a>
+
+  <!-- =========================================================
+       1. EN-TÊTE
+       ========================================================= -->
+  <header class="site-header" id="siteHeader">
+    <div class="container header-inner">
+
+      <a class="brand" href="#accueil" aria-label="Porto Grill, retour à l’accueil">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-name">Porto Grill</span>
+      </a>
+
+      <p class="status" id="openStatus" role="status">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span class="status-text">Horaires plus bas sur la page</span>
+      </p>
+
+      <button class="menu-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="siteNav">
+        <span class="menu-toggle-label">Menu</span>
+        <span class="menu-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span>
+      </button>
+
+      <nav class="site-nav" id="siteNav" aria-label="Navigation principale">
+        <ul class="nav-list">
+          <li><a href="#presentation">Le lieu</a></li>
+          <li><a href="#menu">Menu</a></li>
+          <li><a href="#galerie">Galerie</a></li>
+          <li><a href="#groupes">Groupes</a></li>
+          <li><a href="#infos">Infos pratiques</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a class="btn btn-light" href="#menu">Découvrir le menu</a>
+          <a class="btn btn-primary" href="#contact">Contacter le restaurant</a>
+        </div>
+      </nav>
+
+    </div>
+  </header>
+
+  <main id="contenu">
+
+    <!-- =========================================================
+         2. ACCUEIL
+         ========================================================= -->
+    <section class="hero" id="accueil" aria-labelledby="titre-accueil">
+      <!-- IMAGE À REMPLACER : images/ambiance.jpg (photo du restaurant si disponible, sinon image d’ambiance libre de droits).
+           Adaptez le texte alt à l’image choisie. Cette image n’est pas chargée en différé : c’est la première visible. -->
+      <img class="hero-img" src="images/ambiance.jpg" width="1600" height="1000" fetchpriority="high"
+           alt="Ambiance chaleureuse d’un restaurant le soir, tables éclairées à la bougie (image d’illustration)">
+      <div class="hero-shade" aria-hidden="true"></div>
+
+      <div class="container hero-content">
+        <h1 id="titre-accueil">Le restaurant-bar de Porto-Novo où l’on prend son temps</h1>
+        <p class="hero-text">
+          Porto Grill vous accueille Bd du Cinquantenaire, dans une ambiance décontractée et calme. Bières, plats à partager, déjeuner ou dîner : venez en famille, entre amis ou seul(e).
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#menu">Découvrir le menu</a>
+          <a class="btn btn-outline" href="#contact">Contacter le restaurant</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         3. PRÉSENTATION
+         ========================================================= -->
+    <section class="section presentation" id="presentation" aria-labelledby="titre-presentation">
+      <div class="container split">
+        <div class="split-text" data-reveal>
+          <h2 id="titre-presentation">Un lieu simple, pour toutes les occasions</h2>
+          <p>
+            Porto Grill est un restaurant et bar de Porto-Novo. L’ambiance y est décrite comme décontractée, branchée, agréable et calme.
+          </p>
+          <p>
+            Le lieu accueille les familles, les groupes, les touristes et les personnes qui dînent seules. Le déjeuner, le dîner, le service à table et le traiteur sont proposés, et les réservations sont acceptées.
+          </p>
+          <p class="note">
+            Note Google communiquée : 4,4 sur 5, sur 11 avis. <strong>À vérifier avant publication.</strong>
+          </p>
+        </div>
+
+        <figure class="split-figure" data-reveal>
+          <!-- IMAGE À REMPLACER : images/table.jpg -->
+          <img src="images/table.jpg" width="900" height="1100" loading="lazy"
+               alt="Table conviviale avec plusieurs plats à partager (image d’illustration)">
+          <figcaption>Image d’illustration, pas une photo du restaurant.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         4. CE QUI REND LE LIEU SPÉCIAL
+         ========================================================= -->
+    <section class="section highlights" id="atouts" aria-labelledby="titre-atouts">
+      <div class="container">
+        <h2 id="titre-atouts" data-reveal>Ce qui rend le lieu spécial</h2>
+
+        <ul class="highlight-grid">
+          <li class="highlight" data-reveal>
+            <h3>Grillades</h3>
+            <p>Un restaurant pensé autour du grill. La carte exacte est à confirmer avec le restaurant.</p>
+          </li>
+          <li class="highlight" data-reveal>
+            <h3>Bar et bières</h3>
+            <p>Un grand choix de bières, des vins et des alcools, avec un bar sur place.</p>
+          </li>
+          <li class="highlight" data-reveal>
+            <h3>Plats à partager</h3>
+            <p>De petites portions à partager, pratiques pour goûter à plusieurs.</p>
+          </li>
+          <li class="highlight" data-reveal>
+            <h3>Groupes et familles</h3>
+            <p>Les groupes et les familles sont accueillis. Les réservations sont acceptées.</p>
+          </li>
+          <li class="highlight" data-reveal>
+            <h3>Parking gratuit</h3>
+            <p>Stationnement facile, parking gratuit et places gratuites dans la rue.</p>
+          </li>
+          <li class="highlight" data-reveal>
+            <h3>Sur place ou traiteur</h3>
+            <p>Déjeuner, dîner, service à table, traiteur et toilettes sur place.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         5. MENU D’EXEMPLES (filtrable)
+         ========================================================= -->
+    <section class="section menu" id="menu" aria-labelledby="titre-menu">
+      <div class="container">
+        <h2 id="titre-menu" data-reveal>Le menu, en exemples</h2>
+
+        <p class="callout" data-reveal>
+          <strong>Exemples à confirmer par le restaurant.</strong>
+          Les plats ci-dessous sont des idées de démonstration. Ni leur disponibilité ni leurs prix ne sont confirmés. Le budget communiqué est de 1 000 à 12 000 F CFA par personne, avec un maximum à confirmer (des tranches vont jusqu’à 16 000 F CFA).
+        </p>
+
+        <div class="filters" role="group" aria-label="Filtrer le menu par catégorie" data-reveal>
+          <button class="filter-btn" type="button" data-filter="all" aria-pressed="true">Tout</button>
+          <button class="filter-btn" type="button" data-filter="grillades" aria-pressed="false">Grillades</button>
+          <button class="filter-btn" type="button" data-filter="francais" aria-pressed="false">Plats chics</button>
+          <button class="filter-btn" type="button" data-filter="partager" aria-pressed="false">À partager</button>
+          <button class="filter-btn" type="button" data-filter="desserts" aria-pressed="false">Desserts</button>
+          <button class="filter-btn" type="button" data-filter="boissons" aria-pressed="false">Boissons</button>
+        </div>
+
+        <ul class="dish-list" id="menuList">
+
+          <!-- Grillades -->
+          <li class="dish dish-signal" data-category="grillades">
+            <h3>Viande de lapin</h3>
+            <p>Spécialité signalée par des clients. Préparation et prix à confirmer.</p>
+            <span class="price">Prix à confirmer</span>
+          </li>
+          <li class="dish" data-category="grillades">
+            <h3>Autres grillades</h3>
+            <p>Sélection de grillades à confirmer par le restaurant.</p>
+            <span class="price">Prix à confirmer</span>
+          </li>
+
+          <!-- Plats français : exemples -->
+          <li class="dish" data-category="francais">
+            <h3>Steak-frites</h3>
+            <p>Pièce de bœuf accompagnée de frites.</p>
+            <span class="price">Prix à confirmer</span>
+          </li>
+          <li class="dish" data-category="francais">
+            <h3>Poulet rôti</h3>
+            <p>Poulet rôti, accompagnement à confirmer.</p>
+            <span class="price">Prix à confirmer</span>
+          </li>
+          <li class="dish" data-category="francais">
+            <h3>Entrecôte</h3>
+            <p>Pièce de bœuf à griller, cuisson au choix.</p>
+            <span class="price">Prix à confirmer</span>
+          </li>
+
+          <!-- Portions à partager -->
+          <li class="dish" data-category="partager">
+            <h3>Petites portions à partager</h3>
+            <p>Le restaurant propose de petites portions à partager. La sélection est à confirmer.</p>
+            <span class="price">Prix à confirmer</span>
+          </li>
+
+          <!-- Desserts : exemples -->
+          <li class="dish" data-category="desserts">
+            <h3>Crème brûlée</h3>
+            <p>Crème vanillée recouverte de sucre caramélisé.</p>
+            <span class="price">Prix à confirmer</span>
+          </li>
+          <li class="dish" data-category="desserts">
+            <h3>Tarte</h3>
+            <p>Tarte maison, garniture à confirmer.</p>
+            <span class="price">Prix à confirmer</span>
+          </li>
+
+          <!-- Boissons : offre communiquée -->
+          <li class="dish" data-category="boissons">
+            <h3>Bières</h3>
+            <p>Un grand choix de bières est signalé. Références à confirmer.</p>
+            <span class="price">Prix à confirmer</span>
+          </li>
+          <li class="dish" data-category="boissons">
+            <h3>Vins</h3>
+            <p>Des vins sont proposés. Sélection à confirmer.</p>
+            <span class="price">Prix à confirmer</span>
+          </li>
+          <li class="dish" data-category="boissons">
+            <h3>Alcools</h3>
+            <p>Des alcools sont proposés au bar. Sélection à confirmer.</p>
+            <span class="price">Prix à confirmer</span>
+          </li>
+
+        </ul>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         6. SÉLECTION EN IMAGES
+         ========================================================= -->
+    <section class="section selection" id="selection" aria-labelledby="titre-selection">
+      <div class="container">
+        <h2 id="titre-selection" data-reveal>Des idées de plats en images</h2>
+        <p class="section-intro" data-reveal>
+          Ces images sont des images d’ambiance. Elles ne montrent pas les plats exacts servis par le restaurant.
+        </p>
+
+        <div class="selection-grid">
+          <figure class="card-figure" data-reveal>
+            <!-- IMAGE À REMPLACER : images/grillades.jpg -->
+            <img src="images/grillades.jpg" width="800" height="1000" loading="lazy"
+                 alt="Viandes en cours de grillade sur le feu (image d’illustration)">
+            <figcaption>
+              <strong>Autour du grill</strong>
+              <span>Image d’illustration, pas une photo du restaurant.</span>
+            </figcaption>
+          </figure>
+
+          <figure class="card-figure" data-reveal>
+            <!-- IMAGE À REMPLACER : images/plat-francais.jpg -->
+            <img src="images/plat-francais.jpg" width="800" height="1000" loading="lazy"
+                 alt="Assiette de cuisine française avec viande et frites (image d’illustration)">
+            <figcaption>
+              <strong>Classiques français</strong>
+              <span>Image d’illustration, pas une photo du restaurant.</span>
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         7. GALERIE
+         ========================================================= -->
+    <section class="section gallery" id="galerie" aria-labelledby="titre-galerie">
+      <div class="container">
+        <h2 id="titre-galerie" data-reveal>Galerie</h2>
+        <p class="section-intro" data-reveal>
+          Images d’ambiance. Remplacez-les par les photos du restaurant dès qu’elles sont disponibles.
+        </p>
+
+        <!-- Sans JavaScript, chaque lien ouvre simplement l’image. Avec JavaScript, elle s’agrandit dans une fenêtre. -->
+        <ul class="gallery-grid">
+          <li data-reveal>
+            <a class="gallery-link" href="images/ambiance.jpg" data-caption="Ambiance du soir (image d’illustration)">
+              <img src="images/ambiance.jpg" width="800" height="600" loading="lazy" alt="Ambiance chaleureuse du soir (image d’illustration)">
+            </a>
+          </li>
+          <li data-reveal>
+            <a class="gallery-link" href="images/table.jpg" data-caption="Table conviviale (image d’illustration)">
+              <img src="images/table.jpg" width="800" height="600" loading="lazy" alt="Table conviviale avec plats à partager (image d’illustration)">
+            </a>
+          </li>
+          <li data-reveal>
+            <a class="gallery-link" href="images/grillades.jpg" data-caption="Grillades (image d’illustration)">
+              <img src="images/grillades.jpg" width="800" height="600" loading="lazy" alt="Viandes en cours de grillade (image d’illustration)">
+            </a>
+          </li>
+          <li data-reveal>
+            <a class="gallery-link" href="images/plat-francais.jpg" data-caption="Plat français (image d’illustration)">
+              <img src="images/plat-francais.jpg" width="800" height="600" loading="lazy" alt="Plat de cuisine française (image d’illustration)">
+            </a>
+          </li>
+          <li data-reveal>
+            <a class="gallery-link" href="images/boissons.jpg" data-caption="Boissons (image d’illustration)">
+              <img src="images/boissons.jpg" width="800" height="600" loading="lazy" alt="Verres de bière et de boissons sur un comptoir (image d’illustration)">
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Fenêtre d’agrandissement (la touche Échap la ferme) -->
+      <dialog class="lightbox" id="lightbox" aria-label="Photo agrandie">
+        <button class="lightbox-btn lightbox-close" id="lightboxClose" type="button" aria-label="Fermer la photo">×</button>
+        <button class="lightbox-btn lightbox-prev" id="lightboxPrev" type="button" aria-label="Photo précédente">‹</button>
+        <figure class="lightbox-figure">
+          <img id="lightboxImage" src="" alt="">
+          <figcaption id="lightboxCaption"></figcaption>
+        </figure>
+        <button class="lightbox-btn lightbox-next" id="lightboxNext" type="button" aria-label="Photo suivante">›</button>
+      </dialog>
+    </section>
+
+    <!-- =========================================================
+         8. GROUPES, TRAITEUR ET RÉVEILLONS
+         ========================================================= -->
+    <section class="section groups" id="groupes" aria-labelledby="titre-groupes">
+      <div class="container split split-reverse">
+        <div class="split-text" data-reveal>
+          <h2 id="titre-groupes">Groupes, traiteur et réveillons</h2>
+          <p>
+            Le restaurant accueille les groupes et propose un service traiteur. Un réveillon en famille fait partie des événements cités pour le lieu.
+          </p>
+          <p>
+            Les offres, les menus de groupe, les tarifs et les dates ne sont pas communiqués. Pour organiser un repas, appelez le restaurant et décrivez votre projet.
+          </p>
+          <a class="btn btn-primary" href="#contact">Contacter le restaurant</a>
+        </div>
+
+        <ul class="check-list" data-reveal>
+          <li>Repas en famille</li>
+          <li>Repas entre amis ou en groupe</li>
+          <li>Service traiteur</li>
+          <li>Réveillon en famille (détails à confirmer)</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         9. AVIS CLIENTS
+         Aucun avis n’est affiché : un avis ne doit être publié que s’il est authentique, à jour
+         et que son auteur a autorisé la publication. Quand c’est le cas, ajoutez ici un bloc comme celui-ci :
+
+         <section class="section reviews" id="avis" aria-labelledby="titre-avis">
+           <div class="container">
+             <h2 id="titre-avis">Avis de clients</h2>
+             <figure class="review">
+               <blockquote><p>TEXTE DE L’AVIS AUTORISÉ</p></blockquote>
+               <figcaption>Prénom, date</figcaption>
+             </figure>
+           </div>
+         </section>
+         ========================================================= -->
+
+    <!-- =========================================================
+         10. HORAIRES ET INFOS PRATIQUES
+         ========================================================= -->
+    <section class="section infos" id="infos" aria-labelledby="titre-infos">
+      <div class="container">
+        <h2 id="titre-infos" data-reveal>Horaires et infos pratiques</h2>
+
+        <div class="infos-grid">
+
+          <div class="info-block" data-reveal>
+            <h3>Horaires</h3>
+            <table class="hours" id="hoursTable">
+              <caption class="visually-hidden">Horaires d’ouverture, heure du Bénin</caption>
+              <tbody>
+                <tr data-day="1"><th scope="row">Lundi</th><td>Fermé</td></tr>
+                <tr data-day="2"><th scope="row">Mardi</th><td>12 h 00 – 00 h 00</td></tr>
+                <tr data-day="3"><th scope="row">Mercredi</th><td>12 h 00 – 00 h 00</td></tr>
+                <tr data-day="4"><th scope="row">Jeudi</th><td>12 h 00 – 00 h 00</td></tr>
+                <tr data-day="5"><th scope="row">Vendredi</th><td>12 h 00 – 00 h 00</td></tr>
+                <tr data-day="6"><th scope="row">Samedi</th><td>9 h 30 – 0 h 30</td></tr>
+                <tr data-day="0"><th scope="row">Dimanche</th><td>9 h 30 – 0 h 30</td></tr>
+              </tbody>
+            </table>
+            <p class="small">Le samedi et le dimanche, le restaurant ferme après minuit.</p>
+          </div>
+
+          <div class="info-block" data-reveal>
+            <h3>Adresse</h3>
+            <address>
+              Porto Grill<br>
+              Bd du Cinquantenaire<br>
+              Porto-Novo, Bénin
+            </address>
+            <p class="small">Code Plus Maps : GJ64+9R Porto-Novo</p>
+            <h3>Téléphone</h3>
+            <p><a href="tel:0161183716">01 61 18 37 16</a></p>
+            <h3>WhatsApp</h3>
+            <p><a href="https://wa.me/2290161183716?text=Bonjour%20Porto%20Grill%2C%20je%20voudrais%20des%20informations." target="_blank" rel="noopener">Écrire sur WhatsApp</a></p>
+          </div>
+
+          <div class="info-block" data-reveal>
+            <h3>Sur place</h3>
+            <ul class="plain-list">
+              <li>Bar sur place</li>
+              <li>Toilettes</li>
+              <li>Réservations acceptées</li>
+              <li>Service à table</li>
+            </ul>
+            <h3>Parking</h3>
+            <p>Stationnement facile, parking gratuit et places gratuites dans la rue.</p>
+          </div>
+
+          <div class="info-block" data-reveal>
+            <h3>Budget</h3>
+            <p>
+              De 1 000 à 12 000 F CFA par personne, selon les informations communiquées.
+              <strong>Maximum à confirmer :</strong> des tranches vont jusqu’à 16 000 F CFA.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         11. CONTACT ET DEMANDE DE RÉSERVATION
+         ========================================================= -->
+    <section class="section contact" id="contact" aria-labelledby="titre-contact">
+      <div class="container contact-grid">
+
+        <div class="contact-intro" data-reveal>
+          <h2 id="titre-contact">Contacter le restaurant</h2>
+          <p>
+            Le plus simple pour réserver est d’appeler. Vous pouvez aussi préparer votre demande avec le formulaire.
+          </p>
+          <p class="callout">
+            <strong>Ce formulaire n’envoie rien et ne réserve pas de table.</strong>
+            Il prépare un résumé de votre demande, que vous transmettez ensuite au restaurant par téléphone ou par WhatsApp. La réservation n’est valable qu’après confirmation par le restaurant.
+          </p>
+
+          <div class="contact-actions">
+            <a class="btn btn-primary" id="callButton" href="tel:0161183716">Appeler le 01 61 18 37 16</a>
+            <a class="btn btn-whatsapp" href="https://wa.me/2290161183716?text=Bonjour%20Porto%20Grill%2C%20je%20voudrais%20des%20informations." target="_blank" rel="noopener">Écrire sur WhatsApp</a>
+            <a class="btn btn-outline-dark" href="https://www.google.com/maps/search/?api=1&amp;query=GJ64%2B9R+Porto-Novo" target="_blank" rel="noopener">Ouvrir dans Google Maps</a>
+          </div>
+
+          <div class="map-wrap">
+            <iframe title="Carte : Porto Grill, Bd du Cinquantenaire, Porto-Novo"
+                    src="https://www.google.com/maps?q=GJ64%2B9R+Porto-Novo&amp;output=embed"
+                    loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
+        </div>
+
+        <div class="booking" data-reveal>
+          <form class="form" id="bookingForm" novalidate>
+            <h3>Préparer ma demande</h3>
+
+            <div class="field">
+              <label for="nom">Nom et prénom</label>
+              <input type="text" id="nom" name="nom" autocomplete="name" required aria-describedby="nom-erreur">
+              <p class="field-error" id="nom-erreur" aria-live="polite"></p>
+            </div>
+
+            <div class="field">
+              <label for="telephone">Votre téléphone</label>
+              <input type="tel" id="telephone" name="telephone" autocomplete="tel" inputmode="tel" placeholder="Ex. : 01 00 00 00 00" required aria-describedby="telephone-erreur">
+              <p class="field-error" id="telephone-erreur" aria-live="polite"></p>
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label for="date">Date souhaitée</label>
+                <input type="date" id="date" name="date" required aria-describedby="date-erreur">
+                <p class="field-error" id="date-erreur" aria-live="polite"></p>
+              </div>
+              <div class="field">
+                <label for="heure">Heure souhaitée</label>
+                <input type="time" id="heure" name="heure" required aria-describedby="heure-erreur">
+                <p class="field-error" id="heure-erreur" aria-live="polite"></p>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="personnes">Nombre de personnes</label>
+              <select id="personnes" name="personnes" required aria-describedby="personnes-erreur">
+                <option value="">Choisir</option>
+                <option value="1">1 personne</option>
+                <option value="2">2 personnes</option>
+                <option value="3">3 personnes</option>
+                <option value="4">4 personnes</option>
+                <option value="5">5 personnes</option>
+                <option value="6">6 personnes</option>
+                <option value="7">7 personnes</option>
+                <option value="8">8 personnes</option>
+                <option value="9">9 personnes</option>
+                <option value="10">10 personnes</option>
+                <option value="plus">Plus de 10 personnes (précisez dans le message)</option>
+              </select>
+              <p class="field-error" id="personnes-erreur" aria-live="polite"></p>
+            </div>
+
+            <div class="field">
+              <label for="message">Message (facultatif)</label>
+              <textarea id="message" name="message" rows="3" placeholder="Occasion, enfants, demande particulière"></textarea>
+            </div>
+
+            <button class="btn btn-primary" type="submit">Préparer ma demande</button>
+          </form>
+
+          <!-- Affiché par JavaScript après une validation réussie -->
+          <div class="result" id="formResult" hidden tabindex="-1">
+            <h3>Votre demande est prête</h3>
+            <p>
+              Ce n’est pas encore une réservation. Envoyez-le au restaurant par WhatsApp, appelez-le, ou copiez le résumé pour l’envoyer vous-même.
+            </p>
+            <label class="visually-hidden" for="requestText">Résumé de votre demande</label>
+            <textarea id="requestText" rows="7" readonly></textarea>
+            <div class="result-actions">
+              <button class="btn btn-primary" type="button" id="copyRequest">Copier le résumé</button>
+              <a class="btn btn-outline-dark" href="tel:0161183716">Appeler le restaurant</a>
+              <!-- WhatsApp : numéro international (229 + numéro à 10 chiffres), chiffres seulement. Le script ajoute le résumé au message. -->
+              <a class="btn btn-whatsapp" id="whatsappLink" href="https://wa.me/2290161183716?text=Bonjour%20Porto%20Grill%2C%20je%20voudrais%20des%20informations." target="_blank" rel="noopener" data-whatsapp="2290161183716">Envoyer sur WhatsApp</a>
+            </div>
+            <p class="small" id="copyFeedback" role="status"></p>
+            <button class="link-button" type="button" id="editRequest">Modifier ma demande</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- =========================================================
+       12. PIED DE PAGE
+       ========================================================= -->
+  <footer class="site-footer">
+    <div class="container footer-grid">
+
+      <div>
+        <p class="brand footer-brand"><span class="brand-mark" aria-hidden="true"></span><span class="brand-name">Porto Grill</span></p>
+        <p>Restaurant-bar à Porto-Novo, Bénin.</p>
+      </div>
+
+      <div>
+        <h2 class="footer-title">Coordonnées</h2>
+        <p>Bd du Cinquantenaire, Porto-Novo</p>
+        <p><a href="tel:0161183716">01 61 18 37 16</a></p>
+        <p><a href="https://wa.me/2290161183716?text=Bonjour%20Porto%20Grill%2C%20je%20voudrais%20des%20informations." target="_blank" rel="noopener">WhatsApp</a></p>
+      </div>
+
+      <div>
+        <h2 class="footer-title">Liens</h2>
+        <ul class="plain-list">
+          <li><a href="#menu">Menu</a></li>
+          <li><a href="#galerie">Galerie</a></li>
+          <li><a href="#infos">Infos pratiques</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+        <!-- RÉSEAUX SOCIAUX : à compléter quand les pages existent. Exemple :
+        <ul class="plain-list" aria-label="Réseaux sociaux">
+          <li><a href="https://www.facebook.com/VOTRE-PAGE" target="_blank" rel="noopener">Facebook</a></li>
+          <li><a href="https://www.instagram.com/VOTRE-COMPTE" target="_blank" rel="noopener">Instagram</a></li>
+        </ul>
+        -->
+      </div>
+
+    </div>
+
+    <div class="container footer-bottom">
+      <details class="credits">
+        <summary>Crédits des images</summary>
+        <!-- À COMPLÉTER pour chaque image : auteur, source (lien) et licence.
+             Utilisez uniquement des images dont la licence autorise un site professionnel. -->
+        <ul class="plain-list">
+          <li>images/ambiance.jpg : source et licence à compléter</li>
+          <li>images/table.jpg : source et licence à compléter</li>
+          <li>images/grillades.jpg : source et licence à compléter</li>
+          <li>images/plat-francais.jpg : source et licence à compléter</li>
+          <li>images/boissons.jpg : source et licence à compléter</li>
+        </ul>
+      </details>
+      <p class="small">© <span id="year">2026</span> Porto Grill. Informations à confirmer avec le restaurant avant publication.</p>
+    </div>
+  </footer>
+
+  <!-- Barre d'actions rapides (téléphone) : appeler ou réserver en un geste -->
+  <nav class="cta-flottante" aria-label="Actions rapides">
+    <a class="btn btn-outline" href="tel:0161183716">Appeler</a>
+    <a class="btn btn-whatsapp" href="https://wa.me/2290161183716?text=Bonjour%20Porto%20Grill%2C%20je%20voudrais%20des%20informations." target="_blank" rel="noopener">WhatsApp</a>
+    <a class="btn btn-primary" href="#contact">Réserver</a>
+  </nav>
+
+  <script src="script.js" defer></script>
+</body>
+</html>

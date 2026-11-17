@@ -1,0 +1,485 @@
+/* =========================================================
+   PORTO GRILL - style.css
+   Sommaire
+   1. Variables (couleurs, polices, tailles)
+   2. Base
+   3. Boutons
+   4. En-tête et navigation
+   5. Accueil
+   6. Sections : présentation, atouts
+   7. Menu d'exemples
+   8. Sélection en images
+   9. Galerie et fenêtre d'agrandissement
+   10. Groupes, infos pratiques
+   11. Contact et formulaire
+   12. Pied de page
+   13. Apparition au défilement
+   14. Grands écrans
+   15. Préférences de mouvement
+   ========================================================= */
+
+
+/* =========================================================
+   1. VARIABLES
+   Les couleurs se changent ici, une seule fois.
+   ========================================================= */
+:root {
+  /* Palette : charbon, crème, braise, cuivre */
+  --charbon: #16120f;
+  --charbon-2: #211b17;
+  --creme: #f6ede0;
+  --sable: #ecdfca;
+  --papier: #fffaf1;
+  --braise: #c8401a;        /* texte blanc dessus : contraste 5 pour 1 */
+  --braise-fonce: #a93412;
+  --cuivre: #e0b266;        /* sur fond sombre */
+  --cuivre-fonce: #8a5a14;  /* sur fond clair */
+
+  /* Couleurs de la section en cours (modifiées par section) */
+  --bg: var(--creme);
+  --fg: var(--charbon);
+  --soft: #4d4238;
+  --line: rgba(22, 18, 15, 0.2);
+  --card: var(--papier);
+  --accent-text: var(--cuivre-fonce);
+
+  /* Polices : si Google Fonts ne charge pas, le navigateur utilise les polices de secours */
+  --font-title: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-text: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+
+  --radius: 8px;
+  --header-h: 4.5rem;
+  --space-section: clamp(3.5rem, 9vw, 7rem);
+}
+
+
+/* =========================================================
+   2. BASE
+   ========================================================= */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 7rem;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-text);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  color: var(--charbon);
+  background: var(--creme);
+}
+
+body:has(dialog[open]) { overflow: hidden; }
+
+[hidden] { display: none !important; }
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  background: #2a211b;       /* couleur affichée si une image ne charge pas */
+  color: #d6cbbb;
+  font-size: 0.9rem;
+}
+
+h1, h2, h3 { margin: 0; font-family: var(--font-title); font-weight: 700; line-height: 1.15; letter-spacing: -0.01em; }
+h2 { font-size: clamp(1.9rem, 5vw, 3rem); margin-bottom: 1.25rem; }
+h3 { font-size: 1.25rem; margin-bottom: 0.5rem; }
+p { margin: 0 0 1rem; max-width: 65ch; }
+ul { margin: 0; padding: 0; list-style: none; }
+address { font-style: normal; }
+a { color: inherit; }
+figure { margin: 0; }
+table { border-collapse: collapse; width: 100%; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+
+:focus-visible { outline: 3px solid var(--braise); outline-offset: 3px; }
+.site-header :focus-visible, .hero :focus-visible, .menu :focus-visible,
+.gallery :focus-visible, .site-footer :focus-visible, .lightbox :focus-visible { outline-color: var(--cuivre); }
+
+::selection { background: var(--braise); color: #fff; }
+
+.container { width: min(1180px, 100% - 2.5rem); margin-inline: auto; }
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+.skip-link {
+  position: fixed; top: -4rem; left: 1rem; z-index: 200;
+  padding: 0.75rem 1rem; background: var(--cuivre); color: var(--charbon); font-weight: 600; border-radius: var(--radius);
+}
+.skip-link:focus { top: 1rem; }
+
+.small { font-size: 0.9rem; color: var(--soft); }
+.plain-list li { padding: 0.15rem 0; }
+
+/* Sections : les couleurs viennent des variables de chaque section */
+.section {
+  background: var(--bg);
+  color: var(--fg);
+  padding-block: var(--space-section);
+}
+.section-intro { color: var(--soft); max-width: 60ch; margin-bottom: 2rem; }
+
+/* Sections sombres */
+.menu, .gallery, .site-footer {
+  --bg: var(--charbon);
+  --fg: var(--creme);
+  --soft: #d6cbbb;
+  --line: rgba(246, 237, 224, 0.22);
+  --card: var(--charbon-2);
+  --accent-text: var(--cuivre);
+}
+
+/* Sections sable */
+.highlights, .groups, .contact { --bg: var(--sable); }
+
+.note { padding-left: 1rem; border-left: 3px solid var(--braise); color: var(--soft); }
+
+.callout {
+  padding: 1rem 1.25rem; margin-bottom: 2rem; max-width: 70ch;
+  background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--braise);
+  border-radius: var(--radius); color: var(--fg);
+}
+
+
+/* =========================================================
+   3. BOUTONS
+   ========================================================= */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 3rem; padding: 0.7rem 1.5rem;
+  border: 2px solid transparent; border-radius: 999px;
+  font-weight: 600; font-size: 1rem; text-align: center; text-decoration: none;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s, transform 0.2s;
+}
+.btn:active { transform: translateY(1px); }
+
+.btn-primary { background: var(--braise); color: #fff; }
+.btn-primary:hover { background: var(--braise-fonce); }
+
+.btn-light { background: var(--creme); color: var(--charbon); }
+.btn-light:hover { background: #fff; }
+
+.btn-outline { border-color: var(--creme); color: var(--creme); background: transparent; }
+.btn-outline:hover { background: var(--creme); color: var(--charbon); }
+
+.btn-outline-dark { border-color: var(--charbon); color: var(--charbon); background: transparent; }
+.btn-outline-dark:hover { background: var(--charbon); color: var(--creme); }
+.btn-whatsapp { background: #25d366; border-color: #25d366; color: #0b2e18; }
+.btn-whatsapp:hover { background: #1ebe5a; border-color: #1ebe5a; }
+
+.link-button { background: none; border: 0; padding: 0.5rem 0; text-decoration: underline; font-weight: 500; color: var(--fg); }
+.link-button:hover { color: var(--braise); }
+
+
+/* =========================================================
+   4. EN-TÊTE ET NAVIGATION (mobile d'abord)
+   ========================================================= */
+.site-header {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--charbon); color: var(--creme);
+  border-bottom: 1px solid rgba(246, 237, 224, 0.14);
+}
+.header-inner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; column-gap: 1rem; padding-block: 0.6rem; }
+
+.brand { display: inline-flex; align-items: center; gap: 0.6rem; text-decoration: none; margin: 0; }
+.brand-name { font-family: var(--font-title); font-weight: 700; font-size: 1.5rem; }
+.brand-mark {
+  width: 0.8rem; height: 1.25rem; background: linear-gradient(to top, var(--braise), var(--cuivre));
+  border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%;
+}
+
+.status { display: flex; align-items: center; gap: 0.5rem; order: 3; width: 100%; margin: 0.15rem 0 0; font-size: 0.9rem; color: #d6cbbb; max-width: none; }
+.status-dot { width: 0.6rem; height: 0.6rem; border-radius: 50%; background: #9a8f82; flex: none; }
+.status.is-open .status-dot { background: #3fb673; }
+.status.is-closed .status-dot { background: #e8715a; }
+
+/* Bouton du menu mobile : visible seulement si JavaScript fonctionne */
+.menu-toggle { display: none; }
+.js .menu-toggle {
+  display: inline-flex; align-items: center; gap: 0.7rem; min-height: 3rem; padding: 0 0.9rem;
+  background: transparent; border: 1.5px solid rgba(246, 237, 224, 0.5); border-radius: 999px; color: var(--creme);
+}
+.menu-toggle-label { font-weight: 600; }
+.menu-toggle-bars { position: relative; width: 1.25rem; height: 1rem; }
+.menu-toggle-bars span {
+  position: absolute; left: 0; width: 100%; height: 2px; background: currentColor; border-radius: 2px;
+  transition: transform 0.25s, opacity 0.2s, top 0.25s;
+}
+.menu-toggle-bars span:nth-child(1) { top: 0; }
+.menu-toggle-bars span:nth-child(2) { top: 7px; }
+.menu-toggle-bars span:nth-child(3) { top: 14px; }
+.menu-toggle[aria-expanded="true"] .menu-toggle-bars span:nth-child(1) { top: 7px; transform: rotate(45deg); }
+.menu-toggle[aria-expanded="true"] .menu-toggle-bars span:nth-child(2) { opacity: 0; }
+.menu-toggle[aria-expanded="true"] .menu-toggle-bars span:nth-child(3) { top: 7px; transform: rotate(-45deg); }
+
+.site-nav { order: 4; width: 100%; padding: 0.75rem 0 1rem; }
+.js .site-nav { display: none; }
+.js .site-nav.is-open { display: block; }
+
+.nav-list { display: grid; }
+.nav-list a { display: block; padding: 0.8rem 0; border-bottom: 1px solid rgba(246, 237, 224, 0.14); text-decoration: none; font-weight: 500; }
+.nav-list a:hover { color: var(--cuivre); }
+.nav-actions { display: grid; gap: 0.75rem; margin-top: 1rem; }
+
+
+/* =========================================================
+   5. ACCUEIL
+   ========================================================= */
+.hero {
+  position: relative; display: flex; align-items: flex-end;
+  min-height: 82svh; min-height: 82vh;
+  color: var(--creme); background: #2a211b; isolation: isolate; overflow: hidden;
+}
+.hero-img { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; }
+.hero-shade {
+  position: absolute; inset: 0; z-index: -1;
+  background: linear-gradient(to top, rgba(22, 18, 15, 0.92) 8%, rgba(22, 18, 15, 0.55) 55%, rgba(22, 18, 15, 0.35));
+}
+.hero-content { padding-block: 4rem 3.5rem; }
+.hero h1 { font-size: clamp(2.3rem, 8.5vw, 4.8rem); max-width: 16ch; margin-bottom: 1.25rem; }
+.hero-text { font-size: 1.15rem; max-width: 52ch; color: #efe5d6; margin-bottom: 2rem; }
+.hero-actions { display: grid; gap: 0.75rem; }
+
+
+/* =========================================================
+   6. PRÉSENTATION ET ATOUTS
+   ========================================================= */
+.split { display: grid; gap: 2.5rem; align-items: center; }
+.split-figure img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: var(--radius); }
+.split-figure figcaption, .card-figure span { font-size: 0.88rem; }
+.split-figure figcaption { margin-top: 0.6rem; color: var(--soft); }
+
+.highlight-grid { display: grid; gap: 2rem 2.5rem; margin-top: 2.5rem; }
+.highlight { padding-top: 1rem; border-top: 3px solid var(--braise); }
+.highlight p { color: var(--soft); margin: 0; }
+
+
+/* =========================================================
+   7. MENU D'EXEMPLES
+   ========================================================= */
+.filters { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 2rem; }
+.filter-btn {
+  min-height: 2.75rem; padding: 0.5rem 1.1rem; border-radius: 999px;
+  background: transparent; border: 1.5px solid var(--line); color: var(--fg); font-weight: 500;
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+}
+.filter-btn:hover { border-color: var(--cuivre); }
+.filter-btn[aria-pressed="true"] { background: var(--braise); border-color: var(--braise); color: #fff; }
+
+.dish-list { display: grid; gap: 1rem; }
+.dish { padding: 1.25rem 1.25rem 1.1rem; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); }
+.dish p { color: var(--soft); margin-bottom: 0.9rem; }
+.dish-signal { border-left: 4px solid var(--braise); }
+.price {
+  display: inline-block; padding: 0.15rem 0.7rem; border: 1px solid var(--accent-text); border-radius: 999px;
+  color: var(--accent-text); font-size: 0.85rem; font-weight: 600;
+}
+
+
+/* =========================================================
+   8. SÉLECTION EN IMAGES
+   ========================================================= */
+.selection-grid { display: grid; gap: 1.25rem; }
+.card-figure { position: relative; overflow: hidden; border-radius: var(--radius); background: #2a211b; }
+.card-figure img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
+.card-figure figcaption {
+  position: absolute; inset: auto 0 0 0; display: grid; gap: 0.15rem; padding: 3rem 1.1rem 1rem;
+  color: var(--creme); background: linear-gradient(to top, rgba(22, 18, 15, 0.95), rgba(22, 18, 15, 0));
+}
+.card-figure strong { font-family: var(--font-title); font-size: 1.35rem; }
+
+
+/* =========================================================
+   9. GALERIE ET FENÊTRE D'AGRANDISSEMENT
+   ========================================================= */
+.gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.6rem; }
+.gallery-link { display: block; overflow: hidden; border-radius: var(--radius); background: #2a211b; }
+.gallery-link img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; transition: transform 0.5s; }
+.gallery-link:hover img { transform: scale(1.04); }
+
+.lightbox {
+  width: 100vw; max-width: none; height: 100vh; height: 100dvh; max-height: none;
+  margin: 0; padding: 0; border: 0; background: rgba(10, 8, 7, 0.95); color: var(--creme);
+}
+.lightbox[open] { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 0.5rem; padding: 1rem; }
+.lightbox::backdrop { background: rgba(10, 8, 7, 0.9); }
+.lightbox-figure { text-align: center; }
+.lightbox-figure img { max-width: 100%; max-height: 78vh; margin-inline: auto; object-fit: contain; border-radius: var(--radius); }
+.lightbox-figure figcaption { margin-top: 0.8rem; font-size: 0.95rem; }
+.lightbox-btn {
+  display: grid; place-items: center; width: 3rem; height: 3rem; border: 0; border-radius: 50%;
+  background: rgba(246, 237, 224, 0.14); color: var(--creme); font-size: 1.9rem; line-height: 1;
+}
+.lightbox-btn:hover { background: var(--braise); }
+.lightbox-close { position: absolute; top: 1rem; right: 1rem; }
+
+
+/* =========================================================
+   10. GROUPES ET INFOS PRATIQUES
+   ========================================================= */
+.check-list li { padding: 0.9rem 0 0.9rem 2.2rem; position: relative; border-bottom: 1px solid var(--line); font-family: var(--font-title); font-size: 1.2rem; }
+.check-list li::before { content: ""; position: absolute; left: 0.2rem; top: 1.35rem; width: 0.8rem; height: 0.8rem; background: var(--braise); border-radius: 2px; transform: rotate(45deg); }
+
+.infos-grid { display: grid; gap: 2rem; margin-top: 2rem; }
+.info-block h3 { margin-top: 1.25rem; }
+.info-block h3:first-child { margin-top: 0; }
+.info-block p { margin-bottom: 0.5rem; }
+.info-block a { color: var(--braise-fonce); font-weight: 600; }
+
+.hours th, .hours td { padding: 0.55rem 0.5rem; border-bottom: 1px solid var(--line); text-align: left; }
+.hours td { text-align: right; white-space: nowrap; }
+.hours tr.is-today { background: rgba(200, 64, 26, 0.1); font-weight: 600; box-shadow: inset 4px 0 0 var(--braise); }
+
+
+/* =========================================================
+   11. CONTACT ET FORMULAIRE
+   ========================================================= */
+.contact-grid { display: grid; gap: 2.5rem; align-items: start; }
+.contact-actions { display: grid; gap: 0.75rem; margin: 1.5rem 0; }
+.map-wrap { aspect-ratio: 4 / 3; min-height: 16rem; overflow: hidden; border-radius: var(--radius); border: 1px solid var(--line); background: #2a211b; }
+.map-wrap iframe { width: 100%; height: 100%; border: 0; }
+
+.booking, .form, .result { color: var(--charbon); }
+.booking { padding: clamp(1.25rem, 4vw, 2.25rem); background: var(--papier); border: 1px solid var(--line); border-radius: var(--radius); }
+.form .btn { width: 100%; margin-top: 0.5rem; }
+
+.field { margin-bottom: 1.1rem; flex: 1 1 0; }
+.field-row { display: grid; gap: 0 1rem; }
+.field label { display: block; margin-bottom: 0.35rem; font-weight: 600; font-size: 0.95rem; }
+.field input, .field select, .field textarea {
+  width: 100%; min-height: 3rem; padding: 0.7rem 0.85rem;
+  background: #fff; border: 1.5px solid #7a6c5f; border-radius: var(--radius);
+}
+.field textarea { resize: vertical; min-height: 6rem; }
+.field input:focus, .field select:focus, .field textarea:focus { outline: 3px solid var(--braise); outline-offset: 1px; border-color: var(--braise); }
+.field [aria-invalid="true"] { border-color: #a4201a; background: #fff6f4; }
+.field-error { min-height: 1.2em; margin: 0.3rem 0 0; font-size: 0.9rem; color: #a4201a; }
+
+.result textarea { width: 100%; margin-bottom: 1rem; padding: 0.8rem; background: #fff; border: 1.5px solid #7a6c5f; border-radius: var(--radius); resize: vertical; }
+.result-actions { display: grid; gap: 0.75rem; margin-bottom: 0.75rem; }
+
+
+/* =========================================================
+   12. PIED DE PAGE
+   ========================================================= */
+.site-footer { background: var(--bg); color: var(--fg); padding-top: 3.5rem; }
+.footer-grid { display: grid; gap: 2rem; padding-bottom: 2.5rem; }
+.footer-title { font-size: 1.1rem; margin-bottom: 0.6rem; }
+.footer-brand { margin-bottom: 0.75rem; }
+.site-footer p { color: var(--soft); }
+.site-footer a { text-decoration: none; }
+.site-footer a:hover { color: var(--cuivre); text-decoration: underline; }
+.footer-bottom { padding-block: 1.5rem; border-top: 1px solid var(--line); }
+.credits { margin-bottom: 1rem; color: var(--soft); font-size: 0.92rem; }
+.credits summary { cursor: pointer; font-weight: 500; }
+.credits ul { margin-top: 0.5rem; }
+.footer-bottom .small { margin: 0; }
+
+
+/* =========================================================
+   13. APPARITION AU DÉFILEMENT
+   Le contenu n'est caché que si JavaScript fonctionne (classe "js").
+   ========================================================= */
+.js [data-reveal] { opacity: 0; transform: translateY(16px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.js [data-reveal].is-visible { opacity: 1; transform: none; }
+
+
+/* =========================================================
+   14. GRANDS ÉCRANS
+   ========================================================= */
+@media (min-width: 700px) {
+  .hero-actions, .contact-actions, .result-actions { display: flex; flex-wrap: wrap; }
+  .highlight-grid { grid-template-columns: repeat(2, 1fr); }
+  .dish-list { grid-template-columns: repeat(2, 1fr); }
+  .selection-grid { grid-template-columns: repeat(3, 1fr); }
+  .gallery-grid { grid-template-columns: repeat(3, 1fr); gap: 0.9rem; }
+  .field-row { grid-template-columns: 1fr 1fr; }
+  .infos-grid { grid-template-columns: repeat(2, 1fr); }
+  .footer-grid { grid-template-columns: 1.4fr 1fr 1fr; }
+  .form .btn { width: auto; }
+}
+
+@media (min-width: 900px) {
+  .split { grid-template-columns: 1.1fr 0.9fr; gap: 5rem; }
+  .split-reverse { grid-template-columns: 0.9fr 1.1fr; }
+  .split-reverse .check-list { order: -1; }
+  .contact-grid { grid-template-columns: 1fr 1fr; gap: 4rem; }
+}
+
+@media (min-width: 1100px) {
+  /* En-tête sur une seule ligne, sans bouton hamburger */
+  .header-inner { flex-wrap: nowrap; gap: 1.5rem; padding-block: 0.8rem; }
+  .status { order: 0; width: auto; margin: 0; white-space: nowrap; }
+  .js .menu-toggle, .menu-toggle { display: none; }
+  .site-nav, .js .site-nav { display: flex; align-items: center; gap: 1.5rem; order: 0; width: auto; padding: 0; }
+  .nav-list { display: flex; gap: 1.4rem; }
+  .nav-list a { padding: 0.3rem 0; border-bottom: 2px solid transparent; }
+  .nav-list a:hover { border-bottom-color: var(--braise); color: var(--creme); }
+  .nav-actions { display: flex; margin: 0; }
+  .nav-actions .btn { min-height: 2.75rem; padding-inline: 1.1rem; font-size: 0.95rem; }
+  html { scroll-padding-top: 5.5rem; }
+
+  .highlight-grid { grid-template-columns: repeat(3, 1fr); }
+  .dish-list { grid-template-columns: repeat(3, 1fr); }
+  .infos-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+
+/* =========================================================
+   15. PRÉFÉRENCES DE MOUVEMENT
+   ========================================================= */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  .js [data-reveal] { opacity: 1; transform: none; }
+}
+
+
+/* =========================================================
+   V12 : DÉCOR PLUS CHALEUREUX ET PLUS ATTIRANT
+   ========================================================= */
+
+/* Cadre élégant quand une photo n'est pas encore là */
+.img-vide { position: relative; display: grid; place-items: center; min-height: 15rem; overflow: hidden;
+  background: radial-gradient(circle at 30% 20%, rgba(224, 178, 102, 0.35), transparent 55%),
+              linear-gradient(135deg, #2a1d15 0%, #6b2a14 55%, #c8401a 130%); }
+.hero.img-vide { min-height: 0; }
+.img-vide-texte { z-index: 1; padding: 1rem 1.4rem; text-align: center; color: var(--creme);
+  font-family: var(--font-title, Georgia, serif); font-size: 1.2rem; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); }
+.hero.img-vide .img-vide-texte { display: none; }
+
+/* Hero : ombre plus chaude, titre plus lumineux */
+.hero-shade { background: linear-gradient(180deg, rgba(22, 18, 15, 0.55) 0%, rgba(120, 38, 12, 0.35) 55%, rgba(22, 18, 15, 0.85) 100%); }
+.hero h1 { text-shadow: 0 3px 24px rgba(0, 0, 0, 0.55); }
+
+/* Plats : cartes qui se soulèvent, filet cuivre, plat vedette mis en avant */
+.dish { position: relative; border-top: 4px solid var(--cuivre); transition: transform 0.25s, box-shadow 0.25s; }
+.dish:hover { transform: translateY(-4px); box-shadow: 0 14px 28px rgba(22, 18, 15, 0.18); }
+.dish-signal { border-top-color: var(--braise); box-shadow: 0 10px 26px rgba(200, 64, 26, 0.22); }
+
+/* Photos des idées de plats : léger zoom au survol */
+.card-figure { overflow: hidden; border-radius: var(--radius); }
+.card-figure img { transition: transform 0.6s; }
+.card-figure:hover img { transform: scale(1.05); }
+
+/* Titres de section : petit filet braise */
+.section h2::after { content: ""; display: block; width: 3.2rem; height: 4px; margin-top: 0.7rem; background: var(--braise); border-radius: 2px; }
+
+/* Barre d'actions rapides : seulement sur téléphone */
+.cta-flottante { display: none; }
+@media (max-width: 760px) {
+  .cta-flottante { position: fixed; z-index: 90; left: 0; right: 0; bottom: 0; display: flex; gap: 0.6rem;
+    padding: 0.6rem 0.8rem calc(0.6rem + env(safe-area-inset-bottom, 0px)); background: rgba(22, 18, 15, 0.94); backdrop-filter: blur(6px); }
+  .cta-flottante .btn { flex: 1; justify-content: center; min-height: 3rem; padding-inline: 0.6rem; }
+  body { padding-bottom: 4.6rem; }
+}
+@media (prefers-reduced-motion: reduce) { .dish, .card-figure img { transition: none; } .dish:hover { transform: none; } }
