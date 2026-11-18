@@ -263,6 +263,16 @@
      ========================================================= */
   try {
     var attente = null;
+     
+       // Alerte sonore et affichage direct des réservations en cuisine
+  sb.channel("cuisine-reservations")
+    .on("postgres_changes", { event: "INSERT", schema: "public", table: "reservations" }, function (payload) {
+      sonner("nouvelle");
+      toast("📅 Nouvelle réservation reçue : " + (payload.new.nom || ""));
+      chargerReservations();
+    })
+    .subscribe();
+     
     sb.channel("cuisine-commandes")
       .on("postgres_changes", { event: "*", schema: "public", table: "commandes" }, function (payload) {
         var n = payload.new || {};
