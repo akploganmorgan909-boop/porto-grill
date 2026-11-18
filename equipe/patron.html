@@ -30,6 +30,7 @@
       <button class="tab" type="button" data-tab="menu" aria-pressed="false">Menu et prix</button>
       <button class="tab" type="button" data-tab="tables" aria-pressed="false">Tables</button>
       <button class="tab" type="button" data-tab="personnel" aria-pressed="false">Personnel</button>
+      <button class="tab" type="button" data-tab="compte" aria-pressed="false">Mon compte</button>
     </nav>
   </header>
 
@@ -132,6 +133,20 @@
 
       <label class="check-bloques"><input type="checkbox" id="voirBloques"> <span id="voirBloquesTexte">Afficher les comptes bloqués</span></label>
       <div id="listePersonnel" class="tables"></div>
+    </section>
+
+    <!-- ========== MON COMPTE ========== -->
+    <section class="panel" id="tab-compte" aria-labelledby="t-compte" hidden>
+      <h1 id="t-compte">Mon compte</h1>
+      <p class="intro">Changez ici votre mot de passe. Il faut d’abord écrire l’ancien, puis le nouveau. Choisissez un mot de passe que vous êtes le seul à connaître.</p>
+
+      <form class="card form-inline" id="formMdp" novalidate autocomplete="off">
+        <h2>Changer mon mot de passe</h2>
+        <div class="field"><label for="mdpAncien">Ancien mot de passe</label><input type="password" id="mdpAncien" autocomplete="current-password" required></div>
+        <div class="field"><label for="mdpNouveau">Nouveau mot de passe (8 caractères minimum)</label><input type="password" id="mdpNouveau" autocomplete="new-password" required></div>
+        <div class="field"><label for="mdpConfirm">Écrivez le nouveau mot de passe une deuxième fois</label><input type="password" id="mdpConfirm" autocomplete="new-password" required></div>
+        <button class="btn btn-primary" type="submit">Changer mon mot de passe</button>
+      </form>
     </section>
 
   </main>
