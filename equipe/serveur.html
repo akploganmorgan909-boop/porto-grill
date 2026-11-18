@@ -29,6 +29,7 @@
     <nav class="tabs" aria-label="Sections de l’espace serveur">
       <button class="tab is-active" type="button" data-tab="nouvelle" aria-pressed="true">Nouvelle commande</button>
       <button class="tab" type="button" data-tab="commandes" aria-pressed="false">Mes commandes <span class="count" id="compteur" hidden></span></button>
+              <button class="tab" type="button" data-tab="reservations" aria-pressed="false">📅 Réservations du jour <span class="count" id="compteurResa" hidden></span></button>
     </nav>
   </header>
 
@@ -79,7 +80,11 @@
       <h1 id="t-commandes">Mes commandes du jour</h1>
       <div id="listeCommandes"></div>
     </section>
-
+    <!-- ========== RÉSERVATIONS DU JOUR ========== -->
+    <section class="panel" id="tab-reservations" aria-labelledby="t-resa" hidden>
+      <h1 id="t-resa">Réservations du jour</h1>
+      <div id="listeResa" class="tickets"></div>
+    </section>
   </main>
 
   <!-- Barre du panier (visible pendant la prise de commande) -->
