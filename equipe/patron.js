@@ -89,6 +89,7 @@
     });
     if (nom === "menu") { agir(chargerMenu)(); }
     if (nom === "tables") { agir(chargerTables)(); }
+    if (nom === "personnel") { agirP(chargerPersonnel)(); }
     if (nom === "tableau") { agir(chargerTableau)(); agir(chargerClotures)(); }
   }
 
@@ -360,6 +361,73 @@
     $("tablePlaces").value = 4;
     toast("Table « " + nom + " » ajoutée.");
     await chargerTables();
+  }));
+
+
+  /* =========================================================
+     5 bis. PERSONNEL (comptes des employés, via la fonction Supabase "personnel")
+     ========================================================= */
+  var ROLES_PERS = { serveur: "Serveur", cuisine: "Cuisine", caissier: "Caissier", patron: "Patron" };
+
+  async function appelPersonnel(action, donnees) {
+    var r = await sb.functions.invoke("personnel", { body: Object.assign({ action: action }, donnees || {}) });
+    if (r.error) {
+      var msg = "Le service Personnel ne répond pas. Réessayez ou prévenez votre prestataire.";
+      try { var j = await r.error.context.json(); if (j && j.error) { msg = j.error; } } catch (x) { /* message par défaut */ }
+      throw new Error(msg);
+    }
+    return r.data;
+  }
+
+  function agirP(fonction) {
+    return async function (e) {
+      try { await fonction(e); }
+      catch (err) { toast((err && err.message) ? err.message : "Une erreur est survenue.", true); }
+    };
+  }
+
+  function lignePersonnel(p) {
+    var actions = [];
+    if (p.role !== "patron") {
+      var bloquer = el("button", { type: "button", "class": "btn btn-ghost btn-small", text: p.actif ? "Bloquer" : "Réactiver" });
+      bloquer.addEventListener("click", agirP(async function () {
+        if (p.actif && !window.confirm("Bloquer l’accès de " + p.nom + " ?")) { return; }
+        await appelPersonnel("set_actif", { id: p.id, actif: !p.actif });
+        toast(p.actif ? "Accès de " + p.nom + " bloqué." : "Accès de " + p.nom + " rétabli.");
+        await chargerPersonnel();
+      }));
+      var champ = el("input", { type: "text", placeholder: "Nouveau mot de passe", autocomplete: "off", "aria-label": "Nouveau mot de passe de " + p.nom });
+      var changer = el("button", { type: "button", "class": "btn btn-ghost btn-small", text: "Changer le mot de passe" });
+      changer.addEventListener("click", agirP(async function () {
+        await appelPersonnel("reset_password", { id: p.id, mdp: champ.value });
+        champ.value = "";
+        toast("Mot de passe changé. Donnez-le à " + p.nom + " en main propre.");
+      }));
+      actions = [bloquer, champ, changer];
+    }
+    return el("div", { "class": "table-item" + (p.actif ? "" : " is-off") }, [
+      el("div", {}, [
+        el("p", { "class": "plat-nom", text: p.nom }),
+        el("p", { "class": "plat-desc", text: (ROLES_PERS[p.role] || p.role) + " · " + p.email + (p.actif ? "" : " · accès bloqué") })
+      ]),
+      el("div", { "class": "plat-actions" }, actions)
+    ]);
+  }
+
+  async function chargerPersonnel() {
+    var d = await appelPersonnel("list");
+    var boite = $("listePersonnel");
+    boite.replaceChildren();
+    (d.equipe || []).forEach(function (p) { boite.appendChild(lignePersonnel(p)); });
+  }
+
+  $("formPersonnel").addEventListener("submit", agirP(async function (e) {
+    e.preventDefault();
+    var nom = $("persNom").value.trim();
+    await appelPersonnel("create", { nom: nom, email: $("persEmail").value, mdp: $("persMdp").value, role: $("persRole").value });
+    $("formPersonnel").reset();
+    toast("Compte créé pour " + nom + ". Donnez-lui son e-mail et son mot de passe en main propre.");
+    await chargerPersonnel();
   }));
 
 

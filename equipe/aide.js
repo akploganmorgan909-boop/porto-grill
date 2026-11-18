@@ -74,47 +74,29 @@
       ],
       questions: [
         ["Comment supprimer une table ?", "Désactivez-la : elle disparaît chez les serveurs. Une table qui a déjà reçu des commandes ne peut pas être effacée, pour garder l'historique des ventes."],
-        ["Comment créer le compte d'un employé ?", "Voir plus bas la section « Gérer le personnel » : elle explique chaque étape, avec les textes à copier."],
+        ["Comment créer le compte d'un employé ?", "Ouvrez l'onglet « Personnel », remplissez le nom, l'adresse e-mail, un mot de passe et le rôle, puis touchez « Créer le compte »."],
         ["Comment repérer une fraude ?", "Comparez les écarts de caisse des clôtures, les commandes annulées et les commandes non encaissées. Le tableau de bord complet arrive."]
       ],
       sections: [
-        ["Créer le compte d'un nouvel employé (serveur, cuisine, caissier...)", [
-          "Ouvrez votre tableau de bord Supabase (supabase.com/dashboard), choisissez votre projet, puis le menu « Authentication » et « Users ». Coupez la traduction automatique du navigateur sur cette page.",
-          "Cliquez sur « Add user » puis « Create new user ». Écrivez l'adresse e-mail de l'employé (Gmail ou autre) et un mot de passe d'au moins 8 caractères, DIFFÉRENT de celui de sa messagerie.",
-          "Cochez « Auto Confirm User », puis cliquez sur « Create user ». Sans cette case, sa connexion sera refusée.",
-          { t: "Donnez-lui son rôle : ouvrez « SQL Editor », « New query », collez ce texte en remplaçant les 3 valeurs, puis cliquez sur « Run ». Le rôle est serveur, cuisine, caissier ou patron. L'identifiant est court : lettres minuscules, chiffres, point, tiret ou _ (jamais une adresse e-mail).",
-            sql: "insert into public.profiles (id, nom, identifiant, role) select id, 'Nom affiché', 'identifiant-court', 'serveur' from auth.users where email = 'adresse@exemple.com';" },
-          { t: "Vérifiez : la ligne de l'employé doit avoir un nom, un rôle et actif à true. (Le message « Success. No rows returned » est normal et ne prouve rien : c'est cette vérification qui compte.)",
-            sql: "select u.email, p.nom, p.role, p.actif from auth.users u left join public.profiles p on p.id = u.id order by p.role, p.nom;" },
-          "Donnez-lui son adresse et son mot de passe en main propre, et dites-lui de ne jamais les partager."
+        ["Créer le compte d'un nouvel employé", [
+          "Ouvrez l'onglet « Personnel ».",
+          "Écrivez son nom, son adresse e-mail, un mot de passe d'au moins 8 caractères (différent de celui de sa messagerie) et son rôle : serveur, cuisine ou caissier.",
+          "Touchez « Créer le compte ». L'employé apparaît dans la liste.",
+          "Donnez-lui son adresse e-mail et son mot de passe en main propre, et dites-lui de ne jamais les partager."
         ]],
-        ["Un employé est renvoyé ou part : couper son accès tout de suite", [
-          { t: "Désactivez son compte (en remplaçant l'adresse). L'effet est IMMÉDIAT : il ne voit plus aucune donnée, même s'il est encore connecté sur son téléphone.",
-            sql: "update public.profiles set actif = false where id = (select id from auth.users where email = 'adresse@exemple.com');" },
-          "Dans « Authentication », « Users », cliquez sur les trois points à droite de son compte et choisissez « Ban user » si l'option est proposée : il ne peut alors plus se reconnecter du tout.",
-          { t: "Vérifiez : sa ligne doit afficher actif à false.", sql: "select u.email, p.nom, p.role, p.actif from auth.users u left join public.profiles p on p.id = u.id order by p.actif, p.nom;" },
-          "NE SUPPRIMEZ PAS le compte d'un employé qui a pris des commandes : la suppression est refusée par la base, et elle effacerait la trace de ses ventes. Désactivé, il garde son historique pour vos contrôles. Vous ne supprimez (« Delete user ») que les comptes qui n'ont jamais rien vendu."
+        ["Un employé part : couper son accès", [
+          "Dans l'onglet « Personnel », touchez « Bloquer » sur sa ligne. L'effet est immédiat, même s'il est encore connecté sur son téléphone.",
+          "Son historique de ventes reste : rien n'est effacé, et vous pouvez le réactiver plus tard avec « Réactiver ».",
+          "Pour un remplaçant, créez un NOUVEAU compte à son nom. Ne lui donnez jamais le compte de l'ancien : ses ventes seraient attribuées à la mauvaise personne."
         ]],
-        ["Remplacer un employé", [
-          "Désactivez l'ancien compte (section précédente).",
-          "Créez un NOUVEAU compte pour le remplaçant, avec SA propre adresse et SON propre mot de passe (première section).",
-          "Ne donnez jamais le compte de l'ancien au nouveau : ses ventes seraient attribuées à la mauvaise personne."
+        ["Changer le mot de passe d'un employé", [
+          "Dans l'onglet « Personnel », écrivez le nouveau mot de passe (8 caractères minimum) dans la case de sa ligne, puis touchez « Changer le mot de passe ».",
+          "Donnez-le-lui en main propre."
         ]],
-        ["Soupçon de fraude ou d'arnaque : agir vite", [
-          "Désactivez le compte de la personne tout de suite (section « renvoyé »).",
-          "Ne supprimez rien : toutes les preuves restent (commandes, prix saisis, annulations, points de caisse, clôtures).",
-          "Si le soupçon touche la caisse, changez aussi le mot de passe du caissier et le vôtre.",
-          "Comparez ensuite les écarts de caisse, les commandes annulées et les commandes non encaissées de la période."
-        ]],
-        ["Changer le mot de passe d'un employé (oubli, soupçon)", [
-          { t: "Collez ceci dans « SQL Editor » en remplaçant l'adresse et le nouveau mot de passe (8 caractères ou plus), puis « Run ». Supprimez ensuite cette requête de l'historique de l'éditeur, pour ne pas laisser le mot de passe écrit. Donnez le nouveau mot de passe à l'employé en main propre.",
-            sql: "update auth.users set encrypted_password = extensions.crypt('NouveauMotDePasse', extensions.gen_salt('bf')) where email = 'adresse@exemple.com';" }
-        ]],
-        ["Empêcher un employé de reprendre l'accès ou de modifier ses informations", [
-          "Un employé ne peut rien modifier dans son profil : seul le patron peut changer un rôle ou réactiver un compte. Il ne peut pas se donner plus de droits.",
-          "Les inscriptions publiques doivent rester désactivées (Supabase, « Authentication », « Sign In / Providers », « Allow new users to sign up » éteint) : personne ne peut se créer un compte tout seul.",
-          "Un compte désactivé reste bloqué même si l'employé change son mot de passe ou son adresse e-mail : le blocage est sur le compte, pas sur l'adresse.",
-          "Ne donnez jamais votre propre compte patron ni l'accès à Supabase à un employé, et activez la double vérification sur votre compte Supabase et sur votre messagerie."
+        ["Soupçon de fraude : agir vite", [
+          "Touchez « Bloquer » sur le compte de la personne tout de suite. Ne supprimez rien : toutes les preuves restent.",
+          "Si le soupçon touche la caisse, changez aussi le mot de passe du caissier.",
+          "Comparez ensuite les écarts de caisse, les commandes annulées et les commandes non encaissées."
         ]]
       ]
     }
