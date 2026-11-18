@@ -404,6 +404,14 @@
         toast("Mot de passe changé. Donnez-le à " + p.nom + " en main propre.");
       }));
       actions = [bloquer, champ, changer];
+      var suppr = el("button", { type: "button", "class": "btn btn-ghost btn-small", text: "Supprimer" });
+      suppr.addEventListener("click", agirP(async function () {
+        if (!window.confirm("Supprimer définitivement le compte de " + p.nom + " ?\n\nCela marche seulement si ce compte n’a jamais pris de commande. Sinon, utilisez « Bloquer ».")) { return; }
+        await appelPersonnel("delete", { id: p.id });
+        toast("Compte de " + p.nom + " supprimé.");
+        await chargerPersonnel();
+      }));
+      actions.push(suppr);
     }
     return el("div", { "class": "table-item" + (p.actif ? "" : " is-off") }, [
       el("div", {}, [
@@ -416,10 +424,20 @@
 
   async function chargerPersonnel() {
     var d = await appelPersonnel("list");
-    var boite = $("listePersonnel");
-    boite.replaceChildren();
-    (d.equipe || []).forEach(function (p) { boite.appendChild(lignePersonnel(p)); });
+    equipeCourante = d.equipe || [];
+    afficherPersonnel();
   }
+
+  var equipeCourante = [];
+  function afficherPersonnel() {
+    var boite = $("listePersonnel");
+    var voir = $("voirBloques").checked;
+    var nbBloques = equipeCourante.filter(function (p) { return !p.actif; }).length;
+    $("voirBloquesTexte").textContent = "Afficher les comptes bloqués (" + nbBloques + ")";
+    boite.replaceChildren();
+    equipeCourante.forEach(function (p) { if (p.actif || voir) { boite.appendChild(lignePersonnel(p)); } });
+  }
+  $("voirBloques").addEventListener("change", afficherPersonnel);
 
   $("formPersonnel").addEventListener("submit", agirP(async function (e) {
     e.preventDefault();
