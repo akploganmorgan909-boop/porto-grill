@@ -450,6 +450,28 @@
 
 
   /* =========================================================
+     5 ter. MON COMPTE (changer son propre mot de passe)
+     ========================================================= */
+  $("formMdp").addEventListener("submit", agirP(async function (e) {
+    e.preventDefault();
+    var ancien = $("mdpAncien").value;
+    var nouveau = $("mdpNouveau").value;
+    var confirme = $("mdpConfirm").value;
+    if (!ancien) { throw new Error("Écrivez votre ancien mot de passe."); }
+    if (nouveau.length < 8) { throw new Error("Le nouveau mot de passe doit avoir au moins 8 caractères."); }
+    if (nouveau !== confirme) { throw new Error("Les deux nouveaux mots de passe ne sont pas identiques."); }
+    if (nouveau === ancien) { throw new Error("Le nouveau mot de passe doit être différent de l’ancien."); }
+    // On vérifie d'abord l'ancien mot de passe
+    var v = await sb.auth.signInWithPassword({ email: moi.email, password: ancien });
+    if (v.error) { throw new Error("L’ancien mot de passe est incorrect."); }
+    var r = await sb.auth.updateUser({ password: nouveau });
+    if (r.error) { throw new Error("Changement impossible. Réessayez dans un instant."); }
+    $("formMdp").reset();
+    toast("Mot de passe changé. Utilisez-le à votre prochaine connexion.");
+  }));
+
+
+  /* =========================================================
      6. TEMPS RÉEL ET DÉMARRAGE
      ========================================================= */
 
