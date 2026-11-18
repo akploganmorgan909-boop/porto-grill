@@ -13,6 +13,13 @@
   <link rel="stylesheet" href="equipe.css">
   <link rel="stylesheet" href="patron.css">
   <link rel="stylesheet" href="aide.css">
+  <style>
+    .alerte-item { display: flex; justify-content: space-between; align-items: center; padding: 1rem; margin-bottom: 0.8rem; background: rgba(255,255,255,0.04); border-left: 4px solid #f59e0b; border-radius: 8px; gap: 1rem; }
+    .alerte-item.is-read { border-left-color: #555; opacity: 0.6; }
+    .alerte-text { margin: 0; font-weight: 500; }
+    .alerte-date { font-size: 0.85rem; opacity: 0.7; margin-top: 0.2rem; }
+    .banniere-notif { background: linear-gradient(90deg, #78350f, #b45309); padding: 0.9rem 1.2rem; border-radius: 8px; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+  </style>
 </head>
 
 <body class="app" data-aide="patron">
@@ -30,7 +37,7 @@
       <button class="tab" type="button" data-tab="menu" aria-pressed="false">Menu et prix</button>
       <button class="tab" type="button" data-tab="tables" aria-pressed="false">Tables</button>
       <button class="tab" type="button" data-tab="personnel" aria-pressed="false">Personnel</button>
-      <button class="tab" type="button" data-tab="compte" aria-pressed="false">Mon compte</button>
+      <button class="tab" type="button" data-tab="alertes" aria-pressed="false">🔔 Notifications <span class="count" id="compteurAlertes" hidden>0</span></button>
     </nav>
   </header>
 
@@ -39,6 +46,14 @@
     <!-- ========== TABLEAU DE BORD ========== -->
     <section class="panel" id="tab-tableau" aria-labelledby="t-tableau">
       <h1 id="t-tableau">Tableau de bord <span class="date-jour" id="dateJour"></span></h1>
+
+      <!-- Bannière d'alerte si un mot de passe a changé pendant votre absence -->
+      <div id="banniereAlertes" class="banniere-notif" hidden>
+        <div>
+          <strong>🔔 Alerte sécurité :</strong> Des modifications de mot de passe ont été effectuées.
+        </div>
+        <button class="btn btn-small btn-primary" type="button" id="btnVoirAlertes">Voir les alertes</button>
+      </div>
 
       <div id="clotures-jours" class="cloture-liste"></div>
 
@@ -110,7 +125,6 @@
       <div id="listeTables" class="tables"></div>
     </section>
 
-
     <!-- ========== PERSONNEL ========== -->
     <section class="panel" id="tab-personnel" aria-labelledby="t-personnel" hidden>
       <h1 id="t-personnel">Personnel</h1>
@@ -131,33 +145,25 @@
         <button class="btn btn-primary" type="submit">Créer le compte</button>
       </form>
 
-      <label class="check-bloques"><input type="checkbox" id="voirBloques"> <span id="voirBloquesTexte">Afficher les comptes bloqués</span></label>
       <div id="listePersonnel" class="tables"></div>
     </section>
 
-    <!-- ========== MON COMPTE ========== -->
-    <section class="panel" id="tab-compte" aria-labelledby="t-compte" hidden>
-      <h1 id="t-compte">Mon compte</h1>
-      <p class="intro">Changez ici votre mot de passe. Il faut d’abord écrire l’ancien, puis le nouveau. Choisissez un mot de passe que vous êtes le seul à connaître.</p>
-
-      <form class="card form-inline" id="formMdp" novalidate autocomplete="off">
-        <h2>Changer mon mot de passe</h2>
-        <div class="field"><label for="mdpAncien">Ancien mot de passe</label><input type="password" id="mdpAncien" autocomplete="current-password" required></div>
-        <div class="field"><label for="mdpNouveau">Nouveau mot de passe (8 caractères minimum)</label><input type="password" id="mdpNouveau" autocomplete="new-password" required></div>
-        <div class="field"><label for="mdpConfirm">Écrivez le nouveau mot de passe une deuxième fois</label><input type="password" id="mdpConfirm" autocomplete="new-password" required></div>
-        <button class="btn btn-primary" type="submit">Changer mon mot de passe</button>
-      </form>
+    <!-- ========== NOTIFICATIONS / ALERTES ========== -->
+    <section class="panel" id="tab-alertes" aria-labelledby="t-alertes" hidden>
+      <h1 id="t-alertes">Notifications & Sécurité</h1>
+      <p class="intro">Historique des modifications de mot de passe de votre équipe. Les alertes restent ici tant que vous ne les avez pas confirmées.</p>
+      <div id="listeAlertes" class="alertes-liste"></div>
     </section>
 
   </main>
 
-  <!-- Messages (succès ou erreur) -->
   <p class="toast" id="toast" role="status" aria-live="polite" hidden></p>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.1/dist/umd/supabase.js"></script>
   <script src="config.js"></script>
   <script src="commun.js"></script>
   <script src="patron.js"></script>
+  <script src="../notifications.js"></script>
   <script src="aide.js"></script>
 </body>
 </html>
