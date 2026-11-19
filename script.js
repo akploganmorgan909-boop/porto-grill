@@ -107,6 +107,19 @@
     Object.keys(regles).forEach(function (n) { if (!verifier(n)) { ok = false; } });
     if (!ok) { var p = $('[aria-invalid="true"]', form); if (p) { p.focus(); } return; }
     var t = resume(); zone.value = t; retour.textContent = "";
+if (window.enregistrerReservation) {
+  var f = form.elements;
+  window.enregistrerReservation({
+    nom: f.nom.value.trim(),
+    telephone: f.telephone.value.trim(),
+    date: f.date.value,
+    heure: f.heure.value,
+    personnes: f.personnes.value,
+    message: f.message.value.trim()
+  }).then(function (ok) {
+    retour.textContent = ok ? "Demande transmise au restaurant." : "L’envoi automatique a échoué. Envoyez la demande par WhatsApp ou appelez le restaurant.";
+  });
+}
     var wa = $("#whatsappLink"); wa.href = "https://wa.me/" + wa.getAttribute("data-whatsapp") + "?text=" + encodeURIComponent(t);
     form.hidden = true; resultat.hidden = false; resultat.focus();
   });
