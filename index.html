@@ -49,7 +49,7 @@
   <section class="booking" id="reservation" aria-labelledby="t-resa">
     <div class="wrap">
       <h2 id="t-resa">Réserver une table</h2>
-      <p class="callout"><strong>Ce formulaire n’envoie rien et ne réserve pas de table.</strong> Il prépare un résumé de votre demande, que vous transmettez au restaurant par WhatsApp ou par téléphone. La réservation n’est valable qu’après confirmation par le restaurant.</p>
+<p class="callout"><strong>Votre demande est transmise au restaurant.</strong> Elle n’est pas une réservation tant que le restaurant ne l’a pas confirmée. Vous pouvez aussi l’envoyer par WhatsApp ou appeler pour aller plus vite.</p>
       <form class="form" id="bookingForm" novalidate>
         <div class="field"><label for="nom">Nom et prénom</label><input type="text" id="nom" name="nom" autocomplete="name" required><p class="field-error" id="nom-erreur" aria-live="polite"></p></div>
         <div class="field"><label for="telephone">Votre téléphone</label><input type="tel" id="telephone" name="telephone" autocomplete="tel" inputmode="tel" placeholder="Ex. : 01 00 00 00 00" required><p class="field-error" id="telephone-erreur" aria-live="polite"></p></div>
@@ -68,7 +68,7 @@
       </form>
       <div class="result" id="formResult" hidden tabindex="-1">
         <h3>Votre demande est prête</h3>
-        <p>Ce n’est pas encore une réservation. Envoyez-la au restaurant par WhatsApp, appelez, ou copiez le résumé.</p>
+<p>Ce n’est pas encore une réservation : elle est valable après confirmation du restaurant. Vous pouvez aussi l’envoyer par WhatsApp, appeler, ou copier le résumé.</p>
         <label class="vh" for="requestText">Résumé de votre demande</label>
         <textarea id="requestText" rows="7" readonly></textarea>
         <p class="cta">
@@ -85,6 +85,7 @@
 <footer><p>© Porto Grill, Porto-Novo · <a href="equipe/connexion.html">Espace équipe</a></p></footer>
 <nav class="float" aria-label="Actions rapides"><a href="tel:0161183716">Appeler</a><a href="https://wa.me/2290161183716" target="_blank" rel="noopener">WhatsApp</a><a href="#reservation">Réserver</a></nav>
 <script src="menu.js"></script>
+<script src="reservations.js"></script>
 <script src="script.js"></script>
 </body>
 </html>
