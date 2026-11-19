@@ -588,51 +588,8 @@
   } catch (e) {
     console.warn("Temps réel indisponible :", e);
   }
-  // ===== GESTION DES RÉSERVATIONS SERVEUR =====
-  async function chargerReservations() {
-    try {
-      var d = typeof dateBenin === "function" ? dateBenin() : new Intl.DateTimeFormat("en-CA", { timeZone: "Africa/Porto-Novo", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
-      var r = await sb.from("reservations")
-        .select("id, nom, telephone, heure, personnes, message, statut, tables_salle(nom, zone)")
-        .eq("date_reservation", d)
-        .in("statut", ["en_attente", "confirmee", "arrivee"])
-        .order("heure", { ascending: true });
-      if (r.error) return;
-      var boite = $("listeResa");
-      if (!boite) return;
-      boite.replaceChildren();
-      if (!r.data || !r.data.length) {
-        boite.appendChild(el("p", { "class": "vide", text: "Aucune réservation aujourd'hui." }));
-        return;
-      }
-      r.data.forEach(function (x) {
-        var table = typeof un === "function" ? un(x.tables_salle) : x.tables_salle;
-        var etat = x.statut === "arrivee" ? "Arrivés" : (x.statut === "confirmee" ? "Confirmée" : "En attente de confirmation");
-        var carte = el("article", { "class": "resa" }, [
-          el("p", { "class": "resa-heure", text: String(x.heure || "").slice(0, 5) }),
-          el("p", { text: x.nom + " • " + x.personnes + (x.personnes > 1 ? " personnes" : " personne") }),
-          el("p", { text: (table ? "Table : " + table.nom + " • " : "") + etat }),
-          el("p", { text: "Tél. : " + x.telephone })
-        ]);
-        if (x.message) { carte.appendChild(el("p", { "class": "ticket-note", text: x.message })); }
-        boite.appendChild(carte);
-      });
-    } catch (err) {}
-  }
-
-  try {
-    sb.channel("serveur-reservations")
-      .on("postgres_changes", { event: "INSERT", schema: "public", table: "reservations" }, function (payload) {
-        if (typeof bip === "function") bip();
-        toast("📅 Nouvelle réservation : " + (payload.new.nom || "Client"));
-        var comp = $("compteurResa");
-        if (comp) { comp.textContent = "!"; comp.hidden = false; }
-        chargerReservations();
-      })
-      .subscribe();
-  } catch (e) {}
-
-  chargerReservations();
+   // ===== RÉSERVATIONS (code commun : reservations-equipe.js) =====
+  PGResa.monter({ liste: "listeResa", compteur: "compteurResa", toast: toast, bip: bip });
   dessinerLibres();
   ouvrirOnglet("nouvelle");
   agir(chargerCommandes)();   // pour afficher la pastille dès le début
