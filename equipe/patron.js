@@ -499,5 +499,23 @@
     console.warn("Temps réel indisponible :", e);
   }
 
-  ouvrirOnglet("tableau");
+   // ===== RÉSERVATIONS (code commun : reservations-equipe.js) =====
+  function bip() {
+    try {
+      var C = window.AudioContext || window.webkitAudioContext;
+      var ctx = new C();
+      var o = ctx.createOscillator();
+      var g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.frequency.value = 880;
+      g.gain.setValueAtTime(0.0001, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.25, ctx.currentTime + 0.03);
+      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.6);
+      o.start(); o.stop(ctx.currentTime + 0.6);
+    } catch (e) { /* pas de son possible */ }
+  }
+  if (window.PGResa) {
+    PGResa.monter({ liste: "listeResa", compteur: "compteurResa", toast: toast, bip: bip });
+  }
+   ouvrirOnglet("tableau");
 })();
