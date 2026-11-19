@@ -235,7 +235,7 @@
      4. RÉSERVATIONS DU JOUR
      ========================================================= */
     // Code commun à tous les espaces : reservations-equipe.js
-  var resa = PGResa.monter({ liste: "listeResa", compteur: "compteurResa", toast: toast, bip: function () { sonner("nouvelle"); } });
+  var resa = PGResa.monter({ liste: "listeResa", compteur: "compteurResa", toast: toast, lectureSeule: true, bip: function () { sonner("nouvelle"); } });
   async function chargerReservations() { if (resa) { await resa.recharger(); } }
     var r = await sb.from("reservations")
       .select("id, nom, telephone, heure, personnes, message, statut, tables_salle(nom, zone)")
