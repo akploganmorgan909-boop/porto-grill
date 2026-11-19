@@ -234,7 +234,9 @@
   /* =========================================================
      4. RÉSERVATIONS DU JOUR
      ========================================================= */
-  async function chargerReservations() {
+    // Code commun à tous les espaces : reservations-equipe.js
+  var resa = PGResa.monter({ liste: "listeResa", compteur: "compteurResa", toast: toast, bip: function () { sonner("nouvelle"); } });
+  async function chargerReservations() { if (resa) { await resa.recharger(); } }
     var r = await sb.from("reservations")
       .select("id, nom, telephone, heure, personnes, message, statut, tables_salle(nom, zone)")
       .eq("date_reservation", dateBenin())
@@ -263,16 +265,6 @@
      ========================================================= */
   try {
     var attente = null;
-     
-       // Alerte sonore et affichage direct des réservations en cuisine
-  sb.channel("cuisine-reservations")
-    .on("postgres_changes", { event: "INSERT", schema: "public", table: "reservations" }, function (payload) {
-      sonner("nouvelle");
-      toast("📅 Nouvelle réservation reçue : " + (payload.new.nom || ""));
-      chargerReservations();
-    })
-    .subscribe();
-     
     sb.channel("cuisine-commandes")
       .on("postgres_changes", { event: "*", schema: "public", table: "commandes" }, function (payload) {
         var n = payload.new || {};
@@ -286,9 +278,6 @@
         }
         clearTimeout(attente);
         attente = setTimeout(function () { agir(chargerCommandes)(); }, 600);
-      })
-      .on("postgres_changes", { event: "*", schema: "public", table: "reservations" }, function () {
-        if (!$("tab-reservations").hidden) { agir(chargerReservations)(); }
       })
       .subscribe();
   } catch (e) {
