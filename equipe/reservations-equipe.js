@@ -90,7 +90,7 @@
           el("p", {}, [document.createTextNode("Tél. : "), tel])
         ]);
         if (x.message) { c.appendChild(el("p", { "class": "ticket-note", text: x.message })); }
-        c.appendChild(actions);
+       if (!opts.lectureSeule) { c.appendChild(actions); }
         return c;
       }
 
