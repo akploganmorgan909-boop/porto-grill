@@ -62,8 +62,8 @@
   /* =========================================================
      3. PAGES SELON LE RÔLE
      ========================================================= */
-  var PAGES = { patron: "patron.html", cuisine: "cuisine.html", serveur: "serveur.html", caissier: "caissier.html" };
-  var ROLES = { patron: "Patron", cuisine: "Cuisine", serveur: "Serveur", caissier: "Caissier" };
+  var PAGES = { patron: "patron.html", cuisine: "cuisine.html", serveur: "serveur.html", caissier: "caissier.html", super_admin: "patron.html" };
+  var ROLES = { patron: "Patron", cuisine: "Cuisine", serveur: "Serveur", caissier: "Caissier", super_admin: "Super Admin" };
 
   function pageDuRole(role) { return PAGES[role] || "connexion.html"; }
   function nomDuRole(role) { return ROLES[role] || role; }
