@@ -1,17 +1,11 @@
 /* =========================================================
    PORTO GRILL - Espace cuisine
-   Sommaire
-   1. Départ et outils      2. Sons et alertes
-   3. Commandes en direct   4. Réservations du jour
-   5. Temps réel et démarrage
    Règle : la cuisine ne lit JAMAIS les prix (aucune requête sur les prix ici).
    ========================================================= */
 (async function () {
   "use strict";
 
-  /* =========================================================
-     1. DÉPART ET OUTILS
-     ========================================================= */
+  /* 1. DÉPART ET OUTILS */
   var sb = PG.sb;
   var moi = await PG.exiger(["cuisine", "patron"]);
   if (!moi) { return; }
@@ -20,7 +14,6 @@
   $("userName").textContent = moi.nom;
   $("logout").addEventListener("click", PG.deconnexion);
 
-  // Crée un élément HTML sans jamais interpréter le texte comme du code (sécurité)
   function el(tag, props, enfants) {
     var e = document.createElement(tag);
     Object.keys(props || {}).forEach(function (k) {
@@ -61,7 +54,6 @@
     return o.year + "-" + o.month + "-" + o.day;
   }
 
-  // Onglets
   function ouvrirOnglet(nom) {
     document.querySelectorAll(".tab").forEach(function (b) {
       var actif = b.dataset.tab === nom;
@@ -76,12 +68,9 @@
     b.addEventListener("click", function () { ouvrirOnglet(b.dataset.tab); });
   });
 
-  /* =========================================================
-     2. SONS ET ALERTES
-     ========================================================= */
+  /* 2. SONS ET ALERTES */
   var audio = null;
 
-  // À appeler après un toucher : débloque le son et garde l'écran allumé
   $("activerSon").addEventListener("click", async function () {
     try {
       var C = window.AudioContext || window.webkitAudioContext;
@@ -93,7 +82,6 @@
     $("activerSon").hidden = true;
   });
 
-  // Une série de notes : [fréquence, début, durée] (en secondes)
   function notes(liste) {
     if (!audio) { return; }
     liste.forEach(function (n) {
@@ -110,22 +98,19 @@
   }
 
   function sonner(type) {
-    if (type === "cloche") {   // le serveur relance : sonnerie plus pressante, 3 fois
+    if (type === "cloche") {
       notes([[1320, 0, 0.25], [1760, 0.3, 0.25], [1320, 0.6, 0.25], [1760, 0.9, 0.25], [1320, 1.2, 0.25], [1760, 1.5, 0.35]]);
       if (navigator.vibrate) { navigator.vibrate([400, 150, 400, 150, 400]); }
-    } else {                   // nouvelle commande : deux notes
+    } else {
       notes([[660, 0, 0.3], [880, 0.35, 0.5]]);
       if (navigator.vibrate) { navigator.vibrate([250, 120, 250]); }
     }
   }
 
-  /* =========================================================
-     3. COMMANDES EN DIRECT
-     ========================================================= */
+  /* 3. COMMANDES EN DIRECT */
   var commandes = [];
-  var connues = {};   // identifiant de commande -> nombre de relances déjà signalées
+  var connues = {};
 
-  // Durée lisible : 45 -> "45 min", 255 -> "4 h 15"
   function duree(min) {
     if (min < 60) { return min + " min"; }
     var m = min % 60;
@@ -196,7 +181,6 @@
     commandes = r.data;
     commandes.forEach(function (c) { connues[c.id] = c.relances; });
 
-    // À préparer d'abord, les commandes prêtes à la fin
     var ordre = { envoyee: 0, en_preparation: 0, prete: 1 };
     var liste = commandes.slice().sort(function (a, b) { return ordre[a.statut] - ordre[b.statut]; });
 
@@ -219,7 +203,6 @@
     });
   }
 
-  // Les minuteurs et couleurs avancent toutes les 30 secondes
   setInterval(function () {
     document.querySelectorAll(".ticket-minuteur").forEach(function (m) {
       if (m.dataset.statut === "prete") { return; }
@@ -231,12 +214,8 @@
     });
   }, 30000);
 
-  /* =========================================================
-     4. RÉSERVATIONS DU JOUR
-     ========================================================= */
-    // Code commun à tous les espaces : reservations-equipe.js
-  var resa = PGResa.monter({ liste: "listeResa", compteur: "compteurResa", toast: toast, lectureSeule: true, bip: function () { sonner("nouvelle"); } });
-  async function chargerReservations() { if (resa) { await resa.recharger(); } }
+  /* 4. RÉSERVATIONS DU JOUR (lecture seule) */
+  async function chargerReservations() {
     var r = await sb.from("reservations")
       .select("id, nom, telephone, heure, personnes, message, statut, tables_salle(nom, zone)")
       .eq("date_reservation", dateBenin())
@@ -260,11 +239,18 @@
     });
   }
 
-  /* =========================================================
-     5. TEMPS RÉEL ET DÉMARRAGE
-     ========================================================= */
+  /* 5. TEMPS RÉEL ET DÉMARRAGE */
   try {
     var attente = null;
+
+    sb.channel("cuisine-reservations")
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "reservations" }, function (payload) {
+        sonner("nouvelle");
+        toast("📅 Nouvelle réservation reçue : " + ((payload.new && payload.new.nom) || ""));
+        if (!$("tab-reservations").hidden) { agir(chargerReservations)(); }
+      })
+      .subscribe();
+
     sb.channel("cuisine-commandes")
       .on("postgres_changes", { event: "*", schema: "public", table: "commandes" }, function (payload) {
         var n = payload.new || {};
@@ -284,7 +270,6 @@
     console.warn("Temps réel indisponible :", e);
   }
 
-  // Sécurité : si le temps réel s'interrompt, on recharge toutes les 60 secondes
   setInterval(function () { agir(chargerCommandes)(); }, 60000);
 
   ouvrirOnglet("tickets");
