@@ -75,6 +75,7 @@
     });
     $("tab-point").hidden = nom !== "point";
     $("tab-transactions").hidden = nom !== "transactions";
+         if ($("tab-reservations")) { $("tab-reservations").hidden = nom !== "reservations"; }
   }
   document.querySelectorAll(".tab").forEach(function (b) {
     b.addEventListener("click", function () { ouvrirOnglet(b.dataset.tab); });
@@ -267,7 +268,27 @@
       }).subscribe();
   } catch (e) { console.warn("Temps réel indisponible :", e); }
 
-  $("jour").value = jourDeService(new Date());
+   // ===== RÉSERVATIONS (code commun : reservations-equipe.js) =====
+  function bip() {
+    try {
+      var C = window.AudioContext || window.webkitAudioContext;
+      var ctx = new C();
+      var o = ctx.createOscillator();
+      var g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.frequency.value = 880;
+      g.gain.setValueAtTime(0.0001, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.25, ctx.currentTime + 0.03);
+      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.6);
+      o.start(); o.stop(ctx.currentTime + 0.6);
+    } catch (e) { /* pas de son possible */ }
+  }
+  try {
+    if (window.PGResa) {
+      PGResa.monter({ liste: "listeResa", compteur: "compteurResa", toast: toast, bip: bip });
+    }
+  } catch (e) { console.warn("Réservations indisponibles :", e); }
+   $("jour").value = jourDeService(new Date());
   ouvrirOnglet("point");
   agir(charger)();
 })();
