@@ -17,7 +17,7 @@
   var moi = await PG.exiger(["patron"]);
   if (!moi) { return; }
 
-  var $ = function (id) { return document.getElementById(id); };
+   var $ = function (id) { return document.getElementById(id) || document.createElement("div"); };
   $("userName").textContent = moi.nom;
   $("logout").addEventListener("click", PG.deconnexion);
 
