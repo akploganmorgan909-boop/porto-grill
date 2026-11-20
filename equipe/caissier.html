@@ -25,6 +25,7 @@
     <nav class="tabs" aria-label="Sections de l’espace caisse">
       <button class="tab is-active" type="button" data-tab="point" aria-pressed="true">Point de caisse</button>
       <button class="tab" type="button" data-tab="transactions" aria-pressed="false">Transactions <span class="count" id="compteur" hidden></span></button>
+            <button class="tab" type="button" data-tab="reservations" aria-pressed="false">📅 Réservations <span class="count" id="compteurResa" hidden></span></button>
     </nav>
   </header>
 
@@ -51,6 +52,11 @@
       <div class="filtre"><label for="filtreServeur">Serveur</label><select id="filtreServeur"><option value="">Tous</option></select></div>
       <div id="transactions" class="transactions"></div>
     </section>
+    <!-- ========== RÉSERVATIONS ========== -->
+    <section class="panel" id="tab-reservations" aria-labelledby="t-resa" hidden>
+      <h1 id="t-resa">Réservations</h1>
+      <div id="listeResa" class="tickets"></div>
+    </section>
   </main>
 
   <p class="toast" id="toast" role="status" aria-live="polite" hidden></p>
@@ -58,6 +64,7 @@
   <script src="config.js"></script>
   <script src="commun.js"></script>
   <script src="mdp.js"></script>
+   <script src="reservations-equipe.js"></script>
   <script src="caissier.js"></script>
   <script src="aide.js"></script>
 </body>
