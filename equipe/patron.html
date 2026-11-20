@@ -165,6 +165,16 @@
 
   <p class="toast" id="toast" role="status" aria-live="polite" hidden></p>
 
+    <script>
+    function afficherErreur(m) {
+      var d = document.createElement("pre");
+      d.style.cssText = "position:fixed;bottom:0;left:0;right:0;z-index:99999;background:#900;color:#fff;padding:10px;margin:0;font-size:13px;white-space:pre-wrap";
+      d.textContent = "ERREUR : " + m;
+      document.body.appendChild(d);
+    }
+    window.addEventListener("error", function (e) { afficherErreur(e.message + " (" + String(e.filename || "").split("/").pop() + " ligne " + e.lineno + ")"); });
+    window.addEventListener("unhandledrejection", function (e) { afficherErreur(String((e.reason && e.reason.message) || e.reason)); });
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.1/dist/umd/supabase.js"></script>
   <script src="config.js"></script>
   <script src="commun.js"></script>
