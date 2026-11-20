@@ -14,7 +14,7 @@
   var sb = PG.sb;
 
   // Seul le patron entre ici. Sinon, retour à la page de connexion.
-  var moi = await PG.exiger(["patron"]);
+  var moi = await PG.exiger(["patron", "super_admin"]);
   if (!moi) { return; }
 
    var $ = function (id) { return document.getElementById(id) || document.createElement("div"); };
