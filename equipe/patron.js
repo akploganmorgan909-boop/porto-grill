@@ -148,4 +148,342 @@
     r.data.forEach(function (j) {
       var ok = j.ecart_total === 0 && j.points_manquants === 0;
       boite.appendChild(el("p", { "class": "cloture-ligne " + (ok ? "ok" : "ko"),
-        text: j.jour + " · clôturée à " + PG.heure(j.ferme_le) + "
+        text: j.jour + " · clôturée à " + PG.heure(j.ferme_le) + " par " + (noms[j.caissier_id] || "?") + " · encaissé " + PG.argent(j.encaisse) +
+          " · non encaissé " + PG.argent(j.non_encaisse) + " · écart " + PG.argent(j.ecart_total) + (j.points_manquants ? " · " + j.points_manquants + " point(s) non clôturé(s)" : "") }));
+    });
+  }
+
+  async function chargerTableau() {
+    var auj = dateBenin(0);
+    var debut = dateBenin(6);
+
+    var r = await Promise.all([
+      sb.from("ventes_par_jour").select("jour, nb_commandes, total, total_encaisse").gte("jour", debut).order("jour"),
+      sb.from("plats_vendus").select("nom, quantite, montant").eq("jour", auj).order("quantite", { ascending: false }).limit(5)
+    ]);
+    if (r[0].error) { throw r[0].error; }
+    if (r[1].error) { throw r[1].error; }
+
+    var parJour = {};
+    r[0].data.forEach(function (x) { parJour[x.jour] = x; });
+    var j = parJour[auj] || { nb_commandes: 0, total: 0, total_encaisse: 0 };
+
+    $("dateJour").textContent = jourLisible(auj, { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+    $("kpiVentes").textContent = PG.argent(j.total);
+    $("kpiEncaisse").textContent = PG.argent(j.total_encaisse);
+    $("kpiCommandes").textContent = String(j.nb_commandes);
+    $("kpiPanier").textContent = PG.argent(j.nb_commandes ? Math.round(j.total / j.nb_commandes) : 0);
+
+    dessinerGraphique(parJour);
+
+    var liste = $("topPlats");
+    liste.replaceChildren();
+    if (!r[1].data.length) {
+      liste.appendChild(el("li", { "class": "vide", text: "Aucune vente pour l'instant aujourd'hui." }));
+    }
+    r[1].data.forEach(function (p) {
+      liste.appendChild(el("li", {}, [
+        el("span", { text: p.nom }),
+        el("span", { "class": "qte", text: p.quantite + " vendus · " + PG.argent(p.montant) })
+      ]));
+    });
+  }
+
+  var CATEGORIES = {
+    beninois: "Cuisine béninoise", grillades: "Grillades", francais: "Plats français",
+    partager: "À partager", desserts: "Desserts", boissons: "Boissons"
+  };
+
+  function prixDe(plat) {
+    var x = plat.plat_prix;
+    if (Array.isArray(x)) { x = x[0]; }
+    return x ? x.prix : null;
+  }
+
+  function lignePlat(p) {
+    var prix = prixDe(p);
+    var champ = el("input", { type: "number", "class": "prix-input", min: "0", step: "50", "aria-label": "Prix de " + p.nom, value: prix === null ? "" : prix });
+
+    var enregistrer = el("button", { type: "button", "class": "btn btn-ghost btn-small", text: "Enregistrer le prix" });
+    enregistrer.addEventListener("click", agir(async function () {
+      var n = parseInt(champ.value, 10);
+      if (isNaN(n) || n < 0) { toast("Entrez un prix valide.", true); return; }
+      var r = await sb.from("plat_prix").upsert({ plat_id: p.id, prix: n }, { onConflict: "plat_id" });
+      if (r.error) { throw r.error; }
+      toast("Prix de « " + p.nom + " » enregistré : " + PG.argent(n) + ".");
+    }));
+
+    var dispo = el("button", { type: "button", "class": "btn btn-ghost btn-small", text: p.disponible ? "Marquer épuisé" : "Remettre en vente" });
+    dispo.addEventListener("click", agir(async function () {
+      var r = await sb.from("plats").update({ disponible: !p.disponible }).eq("id", p.id);
+      if (r.error) { throw r.error; }
+      await chargerMenu();
+    }));
+
+    var suppr = el("button", { type: "button", "class": "btn btn-danger btn-small", text: "Supprimer" });
+    suppr.addEventListener("click", agir(async function () {
+      if (!window.confirm("Supprimer « " + p.nom + " » ?")) { return; }
+      var r = await sb.from("plats").delete().eq("id", p.id);
+      if (r.error) {
+        if (r.error.code === "23503") { toast("Ce plat a déjà été commandé. Marquez-le épuisé plutôt que de le supprimer.", true); return; }
+        throw r.error;
+      }
+      toast("Plat supprimé.");
+      await chargerMenu();
+    }));
+
+    var infos = el("div", {}, [
+      el("p", { "class": "plat-nom", text: p.nom }),
+      el("span", { "class": "badge" + (p.disponible ? "" : " badge-off"), text: p.disponible ? "En vente" : "Épuisé" })
+    ]);
+    if (p.description) { infos.appendChild(el("p", { "class": "plat-desc", text: p.description })); }
+    if (prix === null) { infos.appendChild(el("p", { "class": "plat-desc", text: "Pas encore de prix : ce plat ne peut pas être commandé." })); }
+
+    return el("div", { "class": "plat" + (p.disponible ? "" : " is-off") }, [
+      infos,
+      el("div", { "class": "plat-actions" }, [champ, enregistrer, dispo, suppr])
+    ]);
+  }
+
+  async function chargerMenu() {
+    var r = await sb.from("plats").select("id, nom, description, categorie, disponible, plat_prix(prix)").order("nom");
+    if (r.error) { throw r.error; }
+
+    var boite = $("listePlats");
+    boite.replaceChildren();
+    if (!r.data.length) {
+      boite.appendChild(el("p", { "class": "vide", text: "Aucun plat pour l'instant. Ajoutez le premier avec le formulaire ci-dessus." }));
+      return;
+    }
+    Object.keys(CATEGORIES).forEach(function (cat) {
+      var plats = r.data.filter(function (p) { return p.categorie === cat; });
+      if (!plats.length) { return; }
+      boite.appendChild(el("h2", { text: CATEGORIES[cat] }));
+      plats.forEach(function (p) { boite.appendChild(lignePlat(p)); });
+    });
+  }
+
+  $("formPlat").addEventListener("submit", agir(async function (e) {
+    e.preventDefault();
+    var nom = $("platNom").value.trim();
+    var prix = parseInt($("platPrix").value, 10);
+    var description = $("platDescription").value.trim();
+
+    if (nom.length < 2) { toast("Écrivez le nom du plat.", true); return; }
+    if (isNaN(prix) || prix < 0) { toast("Entrez un prix valide.", true); return; }
+
+    var a = await sb.from("plats").insert({ nom: nom, categorie: $("platCategorie").value, description: description || null }).select("id").single();
+    if (a.error) { throw a.error; }
+
+    var b = await sb.from("plat_prix").insert({ plat_id: a.data.id, prix: prix });
+    if (b.error) {
+      await sb.from("plats").delete().eq("id", a.data.id);
+      throw b.error;
+    }
+
+    $("formPlat").reset();
+    toast("« " + nom + " » ajouté au menu.");
+    await chargerMenu();
+  }));
+
+  var ZONES = { salle: "Salle", terrasse: "Terrasse", bar: "Bar", vip: "VIP" };
+
+  function ligneTable(t) {
+    var actif = el("button", { type: "button", "class": "btn btn-ghost btn-small", text: t.actif ? "Désactiver" : "Réactiver" });
+    actif.addEventListener("click", agir(async function () {
+      var r = await sb.from("tables_salle").update({ actif: !t.actif }).eq("id", t.id);
+      if (r.error) { throw r.error; }
+      await chargerTables();
+    }));
+
+    var suppr = el("button", { type: "button", "class": "btn btn-danger btn-small", text: "Supprimer" });
+    suppr.addEventListener("click", agir(async function () {
+      if (!window.confirm("Supprimer la table « " + t.nom + " » ?")) { return; }
+      var r = await sb.from("tables_salle").delete().eq("id", t.id);
+      if (r.error) {
+        if (r.error.code === "23503") { toast("Cette table a déjà des commandes. Désactivez-la plutôt.", true); return; }
+        throw r.error;
+      }
+      toast("Table supprimée.");
+      await chargerTables();
+    }));
+
+    return el("div", { "class": "table-item" + (t.actif ? "" : " is-off") }, [
+      el("div", {}, [
+        el("p", { "class": "plat-nom", text: "Table " + t.nom }),
+        el("p", { "class": "plat-desc", text: t.places + " places · " + (ZONES[t.zone] || t.zone) + (t.actif ? "" : " · désactivée") })
+      ]),
+      el("div", { "class": "plat-actions" }, [actif, suppr])
+    ]);
+  }
+
+  async function chargerTables() {
+    var r = await sb.from("tables_salle").select("id, nom, places, zone, actif").order("nom");
+    if (r.error) { throw r.error; }
+    var boite = $("listeTables");
+    boite.replaceChildren();
+    if (!r.data.length) {
+      boite.appendChild(el("p", { "class": "vide", text: "Aucune table pour l'instant. Ajoutez la première avec le formulaire ci-dessus." }));
+      return;
+    }
+    r.data.forEach(function (t) { boite.appendChild(ligneTable(t)); });
+  }
+
+  $("formTable").addEventListener("submit", agir(async function (e) {
+    e.preventDefault();
+    var nom = $("tableNom").value.trim();
+    var places = parseInt($("tablePlaces").value, 10);
+    if (!nom) { toast("Écrivez le nom ou le numéro de la table.", true); return; }
+    if (isNaN(places) || places < 1 || places > 60) { toast("Le nombre de places doit être entre 1 et 60.", true); return; }
+
+    var r = await sb.from("tables_salle").insert({ nom: nom, places: places, zone: $("tableZone").value });
+    if (r.error) { throw r.error; }
+    $("formTable").reset();
+    $("tablePlaces").value = 4;
+    toast("Table « " + nom + " » ajoutée.");
+    await chargerTables();
+  }));
+
+  var ROLES_PERS = { serveur: "Serveur", cuisine: "Cuisine", caissier: "Caissier", patron: "Patron" };
+
+  async function appelPersonnel(action, donnees) {
+    var r = await sb.functions.invoke("personnel", { body: Object.assign({ action: action }, donnees || {}) });
+    if (r.error) {
+      var msg = "Le service Personnel ne répond pas. Réessayez ou prévenez votre prestataire.";
+      try { var j = await r.error.context.json(); if (j && j.error) { msg = j.error; } } catch (x) { }
+      throw new Error(msg);
+    }
+    return r.data;
+  }
+
+  function agirP(fonction) {
+    return async function (e) {
+      try { await fonction(e); }
+      catch (err) { toast((err && err.message) ? err.message : "Une erreur est survenue.", true); }
+    };
+  }
+
+  function lignePersonnel(p) {
+    var actions = [];
+    if (p.role !== "patron") {
+      var bloquer = el("button", { type: "button", "class": "btn btn-ghost btn-small", text: p.actif ? "Bloquer" : "Réactiver" });
+      bloquer.addEventListener("click", agirP(async function () {
+        if (p.actif && !window.confirm("Bloquer l'accès de " + p.nom + " ?")) { return; }
+        await appelPersonnel("set_actif", { id: p.id, actif: !p.actif });
+        toast(p.actif ? "Accès de " + p.nom + " bloqué." : "Accès de " + p.nom + " rétabli.");
+        await chargerPersonnel();
+      }));
+      var champ = el("input", { type: "text", placeholder: "Nouveau mot de passe", autocomplete: "off", "aria-label": "Nouveau mot de passe de " + p.nom });
+      var changer = el("button", { type: "button", "class": "btn btn-ghost btn-small", text: "Changer le mot de passe" });
+      changer.addEventListener("click", agirP(async function () {
+        await appelPersonnel("reset_password", { id: p.id, mdp: champ.value });
+        champ.value = "";
+        toast("Mot de passe changé. Donnez-le à " + p.nom + " en main propre.");
+      }));
+      actions = [bloquer, champ, changer];
+      var suppr = el("button", { type: "button", "class": "btn btn-ghost btn-small", text: "Supprimer" });
+      suppr.addEventListener("click", agirP(async function () {
+        if (!window.confirm("Supprimer définitivement le compte de " + p.nom + " ?\n\nCela marche seulement si ce compte n'a jamais pris de commande. Sinon, utilisez « Bloquer ».")) { return; }
+        await appelPersonnel("delete", { id: p.id });
+        toast("Compte de " + p.nom + " supprimé.");
+        await chargerPersonnel();
+      }));
+      actions.push(suppr);
+    }
+    return el("div", { "class": "table-item" + (p.actif ? "" : " is-off") }, [
+      el("div", {}, [
+        el("p", { "class": "plat-nom", text: p.nom }),
+        el("p", { "class": "plat-desc", text: (ROLES_PERS[p.role] || p.role) + " · " + p.email + (p.actif ? "" : " · accès bloqué") })
+      ]),
+      el("div", { "class": "plat-actions" }, actions)
+    ]);
+  }
+
+  async function chargerPersonnel() {
+    var d = await appelPersonnel("list");
+    equipeCourante = d.equipe || [];
+    afficherPersonnel();
+  }
+
+  var equipeCourante = [];
+  function afficherPersonnel() {
+    var boite = $("listePersonnel");
+    var voir = $("voirBloques").checked;
+    var visibles = equipeCourante.filter(function (p) {
+      return !(p.role === "super_admin" && moi.role !== "super_admin");
+    });
+    var nbBloques = visibles.filter(function (p) { return !p.actif; }).length;
+    $("voirBloquesTexte").textContent = "Afficher les comptes bloqués (" + nbBloques + ")";
+    boite.replaceChildren();
+    visibles.forEach(function (p) { if (p.actif || voir) { boite.appendChild(lignePersonnel(p)); } });
+  }
+  $("voirBloques").addEventListener("change", afficherPersonnel);
+
+  $("formPersonnel").addEventListener("submit", agirP(async function (e) {
+    e.preventDefault();
+    var nom = $("persNom").value.trim();
+    await appelPersonnel("create", { nom: nom, email: $("persEmail").value, mdp: $("persMdp").value, role: $("persRole").value });
+    $("formPersonnel").reset();
+    toast("Compte créé pour " + nom + ". Donnez-lui son e-mail et son mot de passe en main propre.");
+    await chargerPersonnel();
+  }));
+
+  $("formMdp").addEventListener("submit", agirP(async function (e) {
+    e.preventDefault();
+    var ancien = $("mdpAncien").value;
+    var nouveau = $("mdpNouveau").value;
+    var confirme = $("mdpConfirm").value;
+    if (!ancien) { throw new Error("Écrivez votre ancien mot de passe."); }
+    if (nouveau.length < 8) { throw new Error("Le nouveau mot de passe doit avoir au moins 8 caractères."); }
+    if (nouveau !== confirme) { throw new Error("Les deux nouveaux mots de passe ne sont pas identiques."); }
+    if (nouveau === ancien) { throw new Error("Le nouveau mot de passe doit être différent de l'ancien."); }
+    var v = await sb.auth.signInWithPassword({ email: moi.email, password: ancien });
+    if (v.error) { throw new Error("L'ancien mot de passe est incorrect."); }
+    var r = await sb.auth.updateUser({ password: nouveau });
+    if (r.error) { throw new Error("Changement impossible. Réessayez dans un instant."); }
+    $("formMdp").reset();
+    toast("Mot de passe changé. Utilisez-le à votre prochaine connexion.");
+  }));
+
+  try {
+    var attente = null;
+    var rafraichir = function () {
+      clearTimeout(attente);
+      attente = setTimeout(function () { agir(chargerTableau)(); }, 800);
+    };
+    sb.channel("patron-ventes")
+      .on("postgres_changes", { event: "*", schema: "public", table: "commandes" }, rafraichir)
+      .on("postgres_changes", { event: "*", schema: "public", table: "commande_lignes" }, rafraichir)
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "journees" }, async function (payload) {
+        var n = payload.new || {};
+        var p = await sb.from("profiles").select("nom").eq("id", n.caissier_id).maybeSingle();
+        toast("🔒 Journée du " + n.jour + " clôturée à " + PG.heure(n.ferme_le) + " par " + ((p.data && p.data.nom) || "le caissier") +
+          " · encaissé " + PG.argent(n.encaisse) + " · écart " + PG.argent(n.ecart_total) + (n.points_manquants ? " · " + n.points_manquants + " point(s) non clôturé(s)" : ""));
+        clearTimeout(minuteur);
+        $("toast").onclick = function () { $("toast").hidden = true; };
+        agir(chargerClotures)();
+      })
+      .subscribe();
+  } catch (e) {
+    console.warn("Temps réel indisponible :", e);
+  }
+
+  function bip() {
+    try {
+      var C = window.AudioContext || window.webkitAudioContext;
+      var ctx = new C();
+      var o = ctx.createOscillator();
+      var g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.frequency.value = 880;
+      g.gain.setValueAtTime(0.0001, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.25, ctx.currentTime + 0.03);
+      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.6);
+      o.start(); o.stop(ctx.currentTime + 0.6);
+    } catch (e) { }
+  }
+  if (window.PGResa) {
+    PGResa.monter({ liste: "listeResa", compteur: "compteurResa", toast: toast, bip: bip });
+  }
+  ouvrirOnglet("tableau");
+})();
