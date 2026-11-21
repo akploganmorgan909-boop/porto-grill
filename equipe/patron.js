@@ -344,7 +344,7 @@
     await chargerTables();
   }));
 
-  var ROLES_PERS = { serveur: "Serveur", cuisine: "Cuisine", caissier: "Caissier", patron: "Patron" };
+  var ROLES_PERS = { serveur: "Serveur", cuisine: "Cuisine", caissier: "Caissier", patron: "Patron", super_admin: "Super admin" };
 
   async function appelPersonnel(action, donnees) {
     var r = await sb.functions.invoke("personnel", { body: Object.assign({ action: action }, donnees || {}) });
@@ -365,7 +365,7 @@
 
   function lignePersonnel(p) {
     var actions = [];
-    if (p.role !== "patron") {
+    if (p.role !== "patron" && p.role !== "super_admin") {
       var bloquer = el("button", { type: "button", "class": "btn btn-ghost btn-small", text: p.actif ? "Bloquer" : "Réactiver" });
       bloquer.addEventListener("click", agirP(async function () {
         if (p.actif && !window.confirm("Bloquer l'accès de " + p.nom + " ?")) { return; }
