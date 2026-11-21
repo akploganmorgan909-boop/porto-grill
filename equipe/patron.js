@@ -48,7 +48,6 @@
     return PG.erreur(err);
   }
 
-  // Entoure une action : en cas d'erreur, un message clair s'affiche
   function agir(fonction) {
     return async function (e) {
       try { await fonction(e); }
@@ -56,7 +55,6 @@
     };
   }
 
-  // Date du jour au Bénin ("2026-11-15"), avec un décalage en jours (0 = aujourd'hui)
   function dateBenin(decalage) {
     var o = {};
     new Intl.DateTimeFormat("en-CA", { timeZone: "Africa/Porto-Novo", year: "numeric", month: "2-digit", day: "2-digit" })
@@ -72,10 +70,6 @@
     return new Date(iso + "T12:00:00Z").toLocaleDateString("fr-FR", options);
   }
 
-
-  /* =========================================================
-     2. ONGLETS
-     ========================================================= */
   var charge = { tableau: false, menu: false, tables: false };
 
   function ouvrirOnglet(nom) {
@@ -97,10 +91,6 @@
     b.addEventListener("click", function () { ouvrirOnglet(b.getAttribute("data-tab")); });
   });
 
-
-  /* =========================================================
-     3. TABLEAU DE BORD
-     ========================================================= */
   function svg(tag, attrs) {
     var e = document.createElementNS("http://www.w3.org/2000/svg", tag);
     Object.keys(attrs || {}).forEach(function (k) { e.setAttribute(k, attrs[k]); });
@@ -146,8 +136,16 @@
     $("graph").replaceChildren(s);
   }
 
-  // Dernières clôtures de journée faites par le caissier (traçabilité)
   async function chargerClotures() {
     var r = await sb.from("journees").select("jour, ferme_le, caissier_id, encaisse, non_encaisse, points_manquants, ecart_total").order("jour", { ascending: false }).limit(7);
     var boite = $("clotures-jours");
-    if (!boite || r.error) { return; }   // tant
+    if (!boite || r.error) { return; }
+    var p = await sb.from("profiles").select("id, nom");
+    var noms = {};
+    (p.data || []).forEach(function (x) { noms[x.id] = x.nom; });
+    boite.replaceChildren(el("h2", { "class": "step-title", text: "Clôtures de journée (caisse)" }));
+    if (!r.data.length) { boite.appendChild(el("p", { text: "Aucune journée clôturée pour l'instant." })); }
+    r.data.forEach(function (j) {
+      var ok = j.ecart_total === 0 && j.points_manquants === 0;
+      boite.appendChild(el("p", { "class": "cloture-ligne " + (ok ? "ok" : "ko"),
+        text: j.jour + " · clôturée à " + PG.heure(j.ferme_le) + "
