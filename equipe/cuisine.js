@@ -39,12 +39,35 @@
   function agir(fonction) {
     return async function (e) {
       try { await fonction(e); }
-      catch (err) { toast(PG.erreur(err), true); }
+      catch (err) {
+        var t = String((err && err.message) || "");
+        if (/deja prise/i.test(t)) { toast("Cette commande vient d'être prise par un autre cuisinier.", true); }
+        else if (/acces refuse/i.test(t)) { toast("Vous n'avez pas le droit de faire cette action.", true); }
+        else if (/prendre_commande|commande_prete|rendre_commande/i.test(t) && /could not find|not found/i.test(t)) { toast("Les fonctions de traçabilité ne sont pas installées. Exécutez etape-tracabilite.sql dans Supabase.", true); }
+        else { toast(PG.erreur(err), true); }
+      }
     };
   }
 
   var ZONES = { salle: "Salle", terrasse: "Terrasse", bar: "Bar", vip: "VIP / Salon" };
   function un(x) { return Array.isArray(x) ? x[0] : x; }
+
+  var CATEGORIES = {
+    boissons: "Boissons", grillades: "Grillades", beninois: "Cuisine béninoise",
+    francais: "Plats français", partager: "À partager", desserts: "Desserts"
+  };
+  var ORDRE_CAT = ["boissons", "grillades", "beninois", "francais", "partager", "desserts"];
+
+  function rubrique(l) {
+    var plat = un(l.plats);
+    if (!plat || !plat.categorie) { return "Hors menu"; }
+    return CATEGORIES[plat.categorie] || plat.categorie;
+  }
+  function rangRubrique(l) {
+    var plat = un(l.plats);
+    var i = plat && plat.categorie ? ORDRE_CAT.indexOf(plat.categorie) : -1;
+    return i < 0 ? 99 : i;
+  }
 
   function dateBenin() {
     var o = {};
@@ -125,9 +148,13 @@
     return m >= 20 ? "attente-longue" : (m >= 10 ? "attente-moyenne" : "");
   }
 
-  async function changerStatut(id, statut) {
-    var r = await sb.from("commandes").update({ statut: statut }).eq("id", id);
-    if (r.error) { throw r.error; }
+  // Appelle une fonction de la base : prendre_commande, commande_prete ou rendre_commande
+  async function appeler(fonction, id) {
+    var r = await sb.rpc(fonction, { p_id: id });
+    if (r.error) {
+      if (/deja prise/i.test(r.error.message || "")) { await chargerCommandes(); }
+      throw r.error;
+    }
     await chargerCommandes();
   }
 
@@ -137,30 +164,53 @@
     minut.dataset.depuis = c.created_at;
     minut.dataset.statut = c.statut;
 
-    var lignes = el("ul", { "class": "ticket-lignes" }, c.commande_lignes.map(function (l) {
+    var triees = c.commande_lignes.slice().sort(function (a, b) { return rangRubrique(a) - rangRubrique(b); });
+    var lignes = el("ul", { "class": "ticket-lignes" }, triees.map(function (l) {
       var plat = un(l.plats);
-      var li = el("li", { text: l.quantite + " × " + (l.nom_libre || (plat ? plat.nom : "Plat")) });
+      var li = el("li", {}, [
+        el("span", { "class": "ligne-cat", text: rubrique(l) }),
+        document.createTextNode(l.quantite + " × " + (l.nom_libre || (plat ? plat.nom : "Plat")))
+      ]);
       if (l.note) { li.appendChild(el("small", { text: l.note })); }
       return li;
     }));
 
     var actions = el("div", { "class": "ticket-actions" });
+    var estMoi = c.pris_par === moi.id;
+    var estPatron = moi.role === "patron" || moi.role === "super_admin";
     if (c.statut === "envoyee") {
-      var b1 = el("button", { type: "button", "class": "btn btn-ghost", text: "En préparation" });
-      b1.addEventListener("click", agir(function () { return changerStatut(c.id, "en_preparation"); }));
+      var b1 = el("button", { type: "button", "class": "btn btn-primary", text: "Je prends cette commande" });
+      b1.addEventListener("click", agir(function () { return appeler("prendre_commande", c.id); }));
       actions.appendChild(b1);
     }
-    if (c.statut === "envoyee" || c.statut === "en_preparation") {
-      var b2 = el("button", { type: "button", "class": "btn btn-primary", text: "Prête ✓" });
-      b2.addEventListener("click", agir(function () { return changerStatut(c.id, "prete"); }));
-      actions.appendChild(b2);
+    if (c.statut === "en_preparation") {
+      // Seul le cuisinier qui l'a prise (ou le patron) peut la marquer prête. Anciennes commandes sans cuisinier : tout le monde.
+      if (estMoi || estPatron || !c.pris_par) {
+        var b2 = el("button", { type: "button", "class": "btn btn-primary", text: "Prête ✓" });
+        b2.addEventListener("click", agir(function () { return appeler("commande_prete", c.id); }));
+        actions.appendChild(b2);
+      }
+      if (c.pris_par && (estMoi || estPatron)) {
+        var b3 = el("button", { type: "button", "class": "btn btn-ghost", text: "Rendre la commande" });
+        b3.addEventListener("click", agir(async function () {
+          if (window.confirm("Rendre cette commande ? Un autre cuisinier pourra la prendre.")) { await appeler("rendre_commande", c.id); }
+        }));
+        actions.appendChild(b3);
+      }
     }
 
     var carte = el("article", { "class": "ticket " + classeAttente(c) }, [
       el("div", { "class": "ticket-tete" }, [el("h2", { "class": "ticket-table", text: table ? table.nom : "Table ?" }), minut]),
       el("p", { "class": "ticket-zone zone-" + (table ? table.zone : ""), text: table ? (ZONES[table.zone] || table.zone) : "" }),
+      el("p", { "class": "ticket-serveur", text: "Serveur : " + (c.serveur_nom || "?") }),
       el("p", { "class": "ticket-meta", text: "Envoyée à " + PG.heure(c.created_at) + (c.statut === "en_preparation" ? " · en préparation" : "") })
     ]);
+    if (c.statut === "en_preparation" && c.pris_par_nom) {
+      carte.appendChild(el("p", { "class": "ticket-pris", text: "👨‍🍳 Pris par " + c.pris_par_nom + (estMoi ? " (vous)" : "") }));
+    }
+    if (c.statut === "prete" && (c.prete_par_nom || c.pris_par_nom)) {
+      carte.appendChild(el("p", { "class": "ticket-pris", text: "✓ Préparée par " + (c.prete_par_nom || c.pris_par_nom) }));
+    }
     if (c.relances > 0 && c.statut !== "prete") {
       carte.appendChild(el("p", { "class": "ticket-cloche", text: "🔔 Le serveur relance (" + c.relances + " fois)" }));
     }
@@ -173,7 +223,7 @@
   async function chargerCommandes() {
     var depuis = new Date(Date.now() - 18 * 3600 * 1000).toISOString();
     var r = await sb.from("commandes")
-      .select("id, statut, note, created_at, relances, tables_salle(nom, zone), commande_lignes(quantite, nom_libre, note, plats(nom))")
+      .select("id, statut, note, created_at, relances, serveur_nom, pris_par, pris_par_nom, prete_par_nom, tables_salle(nom, zone), commande_lignes(quantite, nom_libre, note, plats(nom, categorie))")
       .in("statut", ["envoyee", "en_preparation", "prete"])
       .gte("created_at", depuis)
       .order("created_at", { ascending: true });
@@ -256,7 +306,7 @@
         var n = payload.new || {};
         if (payload.eventType === "INSERT") {
           sonner("nouvelle");
-          toast("Nouvelle commande !");
+          toast("Nouvelle commande de " + (n.serveur_nom || "un serveur") + " !");
         } else if (payload.eventType === "UPDATE" && n.relances > (connues[n.id] || 0) && n.statut !== "prete") {
           connues[n.id] = n.relances;
           sonner("cloche");
