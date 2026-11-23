@@ -95,6 +95,7 @@
 
   // Commandes non payées du jour, par table : identifiant de table -> { nb, total, nom }
   var enCours = {};
+  var vues = {};   // commande -> dernier état déjà annoncé (évite de répéter les notifications)
 
   function totalCommande(c) {
     var total = 0;
@@ -484,7 +485,7 @@
     var entete = el("div", { "class": "order-head" }, [
       el("div", {}, [
         el("p", { "class": "order-title", text: "Table " + (table ? table.nom : "?") }),
-        el("p", { "class": "order-time", text: PG.heure(c.created_at) + (c.relances ? " · relancée " + c.relances + " fois" : "") + (c.paye ? " · payée (" + (MODES[c.mode_paiement] || "") + ")" : "") })
+        el("p", { "class": "order-time", text: PG.heure(c.created_at) + (c.relances ? " · relancée " + c.relances + " fois" : "") + (c.statut === "en_preparation" && c.pris_par_nom ? " · pris par " + c.pris_par_nom : "") + ((c.statut === "prete" || c.statut === "servie") && (c.prete_par_nom || c.pris_par_nom) ? " · préparée par " + (c.prete_par_nom || c.pris_par_nom) : "") + (c.paye ? " · payée (" + (MODES[c.mode_paiement] || "") + ")" : "") })
       ]),
       el("span", { "class": "st st-" + c.statut, text: STATUTS[c.statut] || c.statut })
     ]);
@@ -537,10 +538,12 @@
   async function chargerCommandes() {
     var debut = dateBenin() + "T00:00:00+01:00";   // minuit au Bénin
     var r = await sb.from("commandes")
-      .select("id, table_id, relances, statut, note, paye, mode_paiement, created_at, tables_salle(nom, zone), commande_lignes(quantite, nom_libre, plats(nom), ligne_prix(prix_unitaire))")
+      .select("id, table_id, relances, statut, note, paye, mode_paiement, created_at, pris_par_nom, prete_par_nom, tables_salle(nom, zone), commande_lignes(quantite, nom_libre, plats(nom), ligne_prix(prix_unitaire))")
       .gte("created_at", debut)
       .order("created_at", { ascending: false });
     if (r.error) { throw r.error; }
+
+    r.data.forEach(function (c) { if (c.statut === "prete" || c.statut === "servie") { vues[c.id] = "prete"; } });
 
     // Total à encaisser par table (commandes non payées et non annulées)
     enCours = {};
@@ -577,9 +580,15 @@
     sb.channel("serveur-commandes")
       .on("postgres_changes", { event: "*", schema: "public", table: "commandes" }, function (payload) {
         var n = payload.new || {};
-        if (payload.eventType === "UPDATE" && n.statut === "prete" && n.serveur_id === moi.id) {
-          bip();
-          toast("Une commande est prête à servir.");
+        if (payload.eventType === "UPDATE" && n.serveur_id === moi.id) {
+          if (n.statut === "en_preparation" && n.pris_par_nom && vues[n.id] !== "pris:" + n.pris_par_nom) {
+            vues[n.id] = "pris:" + n.pris_par_nom;
+            toast(n.pris_par_nom + " a pris votre commande.");
+          } else if (n.statut === "prete" && vues[n.id] !== "prete") {
+            vues[n.id] = "prete";
+            bip();
+            toast("Commande prête, préparée par " + (n.prete_par_nom || n.pris_par_nom || "la cuisine") + ".");
+          }
         }
         clearTimeout(attente);
         attente = setTimeout(function () { agir(chargerCommandes)(); }, 500);
