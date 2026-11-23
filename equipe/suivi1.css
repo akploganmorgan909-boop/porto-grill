@@ -1,0 +1,43 @@
+/* =========================================================
+   PORTO GRILL - Espace patron : bloc « Suivi »
+   ========================================================= */
+.suivi-onglets { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.2rem; }
+.suivi-onglets button[aria-pressed="true"] { background: var(--cuivre); border-color: var(--cuivre); color: var(--charbon); }
+.suivi-zone[hidden] { display: none; }
+
+.suivi-outils { display: flex; flex-wrap: wrap; align-items: center; gap: 0.8rem; margin-bottom: 1rem; }
+.suivi-outils label { display: flex; align-items: center; gap: 0.5rem; color: var(--creme-doux); font-weight: 600; }
+.suivi-outils select, .suivi-outils input {
+  min-height: 2.6rem; padding: 0.3rem 0.7rem; background: var(--charbon-3); color: var(--creme);
+  border: 1.5px solid rgba(246, 237, 224, 0.35); border-radius: var(--radius); font: inherit;
+}
+
+.suivi-carte { margin-bottom: 1rem; }
+.suivi-liste { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.8rem; }
+.suivi-ligne-texte { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.2rem 1rem; margin-bottom: 0.3rem; }
+.suivi-ligne-texte span { color: var(--creme-doux); font-size: 0.92rem; }
+.suivi-barre { display: block; height: 0.6rem; background: var(--charbon-3); border-radius: 999px; overflow: hidden; }
+.suivi-barre-remplie { display: block; height: 100%; background: var(--braise); border-radius: 999px; }
+
+.suivi-liste-simple { gap: 0; }
+.suivi-liste-simple li { display: flex; justify-content: space-between; gap: 1rem; padding: 0.5rem 0; border-bottom: 1px solid rgba(246, 237, 224, 0.12); }
+.suivi-liste-simple li:last-child { border-bottom: 0; }
+.suivi-zero strong { color: var(--rouge); }
+
+.suivi-cartes { display: grid; gap: 0.8rem; }
+.suivi-trace h3 { margin: 0 0 0.3rem; font-family: var(--font-title); font-size: 1.3rem; }
+.suivi-trace p { margin: 0.2rem 0; }
+.suivi-trace .st { display: inline-block; margin-bottom: 0.4rem; padding: 0.1rem 0.7rem; border-radius: 999px; border: 1.5px solid var(--cuivre); color: var(--cuivre); font-size: 0.85rem; font-weight: 700; }
+.suivi-trace .st-annulee { border-color: var(--rouge); color: var(--rouge); }
+.suivi-trace .st-prete, .suivi-trace .st-servie { border-color: var(--vert); color: #8be0ae; }
+
+.suivi-journal { display: grid; gap: 0.6rem; }
+.suivi-evt { padding: 0.8rem 1rem; background: var(--charbon-2); border-left: 4px solid var(--cuivre); border-radius: var(--radius); }
+.suivi-evt p { margin: 0; }
+.suivi-evt-date { color: var(--creme-doux); font-size: 0.85rem; }
+.suivi-evt-action { font-weight: 700; font-size: 1.05rem; }
+.suivi-evt-detail { color: var(--creme-doux); }
+
+@media (min-width: 48rem) {
+  .suivi-cartes { grid-template-columns: repeat(2, 1fr); }
+}
