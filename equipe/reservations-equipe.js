@@ -31,6 +31,26 @@
     return t.charAt(0).toUpperCase() + t.slice(1);
   }
 
+  // Message WhatsApp pour prévenir le client (le patron appuie lui-même sur « Envoyer »)
+  function numeroWhatsApp(tel) {
+    var t = String(tel || "").replace(/[^\d+]/g, "");
+    if (t.charAt(0) === "+") { return t.slice(1); }
+    if (t.indexOf("00") === 0) { return t.slice(2); }
+    if (t.length <= 10) { return "229" + t; }   // numéro béninois sans indicatif
+    return t;
+  }
+  function lienWhatsApp(x, type) {
+    var jour = new Date(x.date_reservation + "T12:00:00Z").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" });
+    var heure = String(x.heure || "").slice(0, 5).replace(":", " h ");
+    var qui = x.personnes + (x.personnes > 1 ? " personnes" : " personne");
+    var texte = type === "confirmee"
+      ? "Bonjour " + x.nom + ", votre réservation au Porto Grill est confirmée : " + jour + " à " + heure + " pour " + qui + ". À bientôt !"
+      : type === "annulee"
+      ? "Bonjour " + x.nom + ", nous sommes désolés : votre réservation du " + jour + " à " + heure + " au Porto Grill est annulée. N’hésitez pas à nous rappeler pour choisir un autre créneau."
+      : "Bonjour " + x.nom + ", nous sommes désolés : nous ne pouvons pas confirmer votre réservation du " + jour + " à " + heure + " au Porto Grill. N’hésitez pas à nous rappeler pour choisir un autre créneau.";
+    return "https://wa.me/" + numeroWhatsApp(x.telephone) + "?text=" + encodeURIComponent(texte);
+  }
+
   var ETATS = { en_attente: "En attente de confirmation", confirmee: "Confirmée", arrivee: "Client arrivé" };
 
   window.PGResa = {
@@ -69,13 +89,21 @@
         if (x.statut === "en_attente") {
           actions.appendChild(bouton("Confirmer", "btn-primary", function () { return modifier(x.id, { statut: "confirmee" }); }));
           actions.appendChild(bouton("Refuser", "btn-ghost", function () {
-            if (window.confirm("Refuser la réservation de " + x.nom + " ?")) { return modifier(x.id, { statut: "refusee" }); }
+            if (window.confirm("Refuser la réservation de " + x.nom + " ?\n\nWhatsApp va s’ouvrir avec un message pour prévenir le client.")) {
+              window.open(lienWhatsApp(x, "refusee"), "_blank", "noopener");
+              return modifier(x.id, { statut: "refusee" });
+            }
           }));
         }
         if (x.statut === "confirmee") {
           actions.appendChild(bouton("Client arrivé", "btn-primary", function () { return modifier(x.id, { statut: "arrivee" }); }));
+          var wa = el("a", { "class": "btn btn-ghost btn-small", href: lienWhatsApp(x, "confirmee"), target: "_blank", rel: "noopener", text: "📲 Prévenir par WhatsApp" });
+          actions.appendChild(wa);
           actions.appendChild(bouton("Annuler", "btn-ghost", function () {
-            if (window.confirm("Annuler la réservation de " + x.nom + " ?")) { return modifier(x.id, { statut: "refusee" }); }
+            if (window.confirm("Annuler la réservation de " + x.nom + " ?\n\nWhatsApp va s’ouvrir avec un message pour prévenir le client.")) {
+              window.open(lienWhatsApp(x, "annulee"), "_blank", "noopener");
+              return modifier(x.id, { statut: "refusee" });
+            }
           }));
         }
         actions.appendChild(bouton("Supprimer", "btn-danger", function () {
