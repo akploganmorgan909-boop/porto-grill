@@ -50,3 +50,8 @@
 .ticket-zone.zone-vip { background: var(--cuivre); color: var(--charbon); border-color: var(--cuivre); }
 .ticket-zone.zone-terrasse { border-color: var(--vert); color: #8be0ae; }
 .ticket-zone.zone-bar { border-color: var(--braise); color: var(--rouge); }
+
+/* Traçabilité : serveur, cuisinier, rubrique de chaque plat */
+.ticket-serveur { margin: 0; font-size: 1.2rem; font-weight: 700; color: var(--creme); }
+.ticket-pris { margin: 0; padding: 0.35rem 0.7rem; border-radius: 999px; align-self: flex-start; background: var(--charbon-3); border: 2px solid var(--vert); color: #8be0ae; font-weight: 700; font-size: 1.05rem; }
+.ligne-cat { display: inline-block; margin-right: 0.55rem; padding: 0.1rem 0.6rem; border-radius: 999px; background: var(--charbon-3); border: 1.5px solid var(--cuivre); color: var(--cuivre); font-size: 0.85rem; font-weight: 700; vertical-align: middle; }
