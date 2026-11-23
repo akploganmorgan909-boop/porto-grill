@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="equipe.css">
   <link rel="stylesheet" href="patron.css">
   <link rel="stylesheet" href="aide.css">
+  <link rel="stylesheet" href="suivi.css">
   <style>
     .alerte-item { display: flex; justify-content: space-between; align-items: center; padding: 1rem; margin-bottom: 0.8rem; background: rgba(255,255,255,0.04); border-left: 4px solid #f59e0b; border-radius: 8px; gap: 1rem; }
     .alerte-item.is-read { border-left-color: #555; opacity: 0.6; }
@@ -34,10 +35,11 @@
     </div>
     <nav class="tabs" aria-label="Sections de l’espace patron">
       <button class="tab is-active" type="button" data-tab="tableau" aria-pressed="true">Tableau de bord</button>
-              <button class="tab" type="button" data-tab="reservations" aria-pressed="false">📅 Réservations <span class="count" id="compteurResa" hidden></span></button>
+      <button class="tab" type="button" data-tab="reservations" aria-pressed="false">📅 Réservations <span class="count" id="compteurResa" hidden></span></button>
       <button class="tab" type="button" data-tab="menu" aria-pressed="false">Menu et prix</button>
       <button class="tab" type="button" data-tab="tables" aria-pressed="false">Tables</button>
       <button class="tab" type="button" data-tab="personnel" aria-pressed="false">Personnel</button>
+      <button class="tab" type="button" data-tab="suivi" aria-pressed="false">📊 Suivi</button>
       <button class="tab" type="button" data-tab="alertes" aria-pressed="false">🔔 Notifications <span class="count" id="compteurAlertes" hidden>0</span></button>
     </nav>
   </header>
@@ -77,11 +79,12 @@
       </div>
     </section>
 
-       <!-- ========== RÉSERVATIONS ========== -->
+    <!-- ========== RÉSERVATIONS ========== -->
     <section class="panel" id="tab-reservations" aria-labelledby="t-resa" hidden>
       <h1 id="t-resa">Réservations</h1>
       <div id="listeResa" class="tickets"></div>
     </section>
+
     <!-- ========== MENU ET PRIX ========== -->
     <section class="panel" id="tab-menu" aria-labelledby="t-menu" hidden>
       <h1 id="t-menu">Menu et prix</h1>
@@ -154,6 +157,12 @@
       <div id="listePersonnel" class="tables"></div>
     </section>
 
+    <!-- ========== SUIVI (statistiques, qui fait quoi, journal d'activité) ========== -->
+    <section class="panel" id="tab-suivi" aria-labelledby="t-suivi" hidden>
+      <h1 id="t-suivi">Suivi</h1>
+      <div id="suiviContenu"></div>
+    </section>
+
     <!-- ========== NOTIFICATIONS / ALERTES ========== -->
     <section class="panel" id="tab-alertes" aria-labelledby="t-alertes" hidden>
       <h1 id="t-alertes">Notifications & Sécurité</h1>
@@ -165,7 +174,7 @@
 
   <p class="toast" id="toast" role="status" aria-live="polite" hidden></p>
 
-    <script>
+  <script>
     function afficherErreur(m) {
       var d = document.createElement("pre");
       d.style.cssText = "position:fixed;bottom:0;left:0;right:0;z-index:99999;background:#900;color:#fff;padding:10px;margin:0;font-size:13px;white-space:pre-wrap";
@@ -181,6 +190,7 @@
   <script src="mdp.js"></script>
   <script src="reservations-equipe.js"></script>
   <script src="patron.js"></script>
+  <script src="suivi.js"></script>
   <script src="../notifications.js"></script>
   <script src="aide.js"></script>
 </body>
