@@ -1,0 +1,50 @@
+/* =========================================================
+   PORTO GRILL - Assistant IA : bulle et fenêtre de chat
+   Utilise les couleurs déjà définies par chaque page (avec un repli doré).
+   ========================================================= */
+.assist-bulle{
+  position:fixed;right:1.1rem;bottom:1.1rem;z-index:60;
+  width:3.4rem;height:3.4rem;border-radius:50%;border:none;cursor:pointer;
+  background:var(--accent,var(--or,#d4a84b));color:#fff;font-size:1.5rem;
+  box-shadow:0 6px 18px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;
+}
+.assist-bulle:hover{filter:brightness(1.08)}
+
+.assist-panneau{
+  position:fixed;right:1.1rem;bottom:1.1rem;z-index:60;
+  width:min(22rem,calc(100vw - 2.2rem));max-height:min(32rem,calc(100vh - 2.2rem));
+  display:flex;flex-direction:column;overflow:hidden;
+  background:var(--charbon-2,#1c1310);color:var(--creme,#f6ede0);
+  border:1.5px solid var(--accent,var(--or,#d4a84b));border-radius:1rem;
+  box-shadow:0 10px 30px rgba(0,0,0,.45);
+}
+.assist-tete{
+  display:flex;align-items:center;justify-content:space-between;gap:.5rem;
+  padding:.8rem 1rem;border-bottom:1px solid rgba(255,255,255,.12);
+  background:var(--accent,var(--or,#d4a84b));color:#fff;
+}
+.assist-fermer{background:none;border:none;color:#fff;font-size:1.1rem;cursor:pointer;line-height:1}
+
+.assist-fil{flex:1;overflow-y:auto;padding:.9rem 1rem;display:flex;flex-direction:column;gap:.55rem}
+.assist-msg{margin:0;padding:.5rem .8rem;border-radius:.8rem;max-width:88%;font-size:.92rem;line-height:1.4}
+.assist-moi{align-self:flex-end;background:var(--accent,var(--or,#d4a84b));color:#fff;border-bottom-right-radius:.2rem}
+.assist-ia{align-self:flex-start;background:rgba(255,255,255,.08);border-bottom-left-radius:.2rem}
+.assist-attente{opacity:.6;font-style:italic}
+
+.assist-form{display:flex;gap:.5rem;padding:.7rem;border-top:1px solid rgba(255,255,255,.12)}
+.assist-form input{
+  flex:1;min-height:2.4rem;padding:.4rem .7rem;border-radius:.6rem;border:1.5px solid rgba(255,255,255,.25);
+  background:rgba(255,255,255,.06);color:inherit;font:inherit;
+}
+.assist-envoyer{
+  border:none;border-radius:.6rem;padding:.4rem 1rem;font-weight:700;cursor:pointer;
+  background:var(--accent,var(--or,#d4a84b));color:#fff;
+}
+.assist-envoyer:disabled{opacity:.6;cursor:default}
+
+.assist-bulle[hidden],.assist-panneau[hidden]{display:none}
+
+@media (min-width:480px){
+  .assist-panneau{right:1.6rem;bottom:1.6rem}
+  .assist-bulle{right:1.6rem;bottom:1.6rem}
+}

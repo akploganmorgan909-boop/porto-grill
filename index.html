@@ -9,11 +9,12 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="assistant.css">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#240606">
 <link rel="apple-touch-icon" href="icon-192.png">
 </head>
-<body>
+<body data-aide="client">
 <header class="top">
   <a class="brand" href="#haut" aria-label="Porto Grill, haut de page"><img src="img/logo.jpg" width="34" height="34" alt="">Porto Grill</a>
   <nav aria-label="Navigation"><a href="#carte">Carte</a><a href="#services">Services</a><a href="#contact">Contact</a><a class="btn gold btn-nav" href="#reservation">Réserver une table</a></nav>
@@ -114,6 +115,8 @@
   <p class="foot-bottom">© Porto Grill, Porto-Novo</p>
 </footer>
 <nav class="float" aria-label="Actions rapides"><a href="tel:0161183716">Appeler</a><a href="https://wa.me/2290161183716" target="_blank" rel="noopener">WhatsApp</a><a href="#reservation">Réserver</a></nav>
+<script src="ai-config.js"></script>
+<script src="assistant.js"></script>
 <script src="install.js"></script>
 <script src="menu.js"></script>
 <script src="reservations.js"></script>
