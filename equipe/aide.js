@@ -1,5 +1,5 @@
 /* =========================================================
-   PORTO GRILL - Centre d'aide intégré (niveau 1, sans IA)
+   PORTO GRILL - Textes d'aide du personnel (lus par l'assistant IA)
    Un bouton "Aide" dans chaque espace : guide pas à pas + questions fréquentes.
    Le guide s'ouvre tout seul à la première visite (une fois par appareil et par espace).
    Pour modifier un texte : changer la section AIDE ci-dessous.
@@ -103,93 +103,6 @@
   };
   window.AIDE_DATA = AIDE; // rendu accessible à l'assistant IA (assistant.js)
 
-  /* =========================================================
-     OUTILS
-     ========================================================= */
-  function el(tag, props, enfants) {
-    var e = document.createElement(tag);
-    Object.keys(props || {}).forEach(function (k) {
-      if (k === "text") { e.textContent = props[k]; }
-      else if (k === "class") { e.className = props[k]; }
-      else { e.setAttribute(k, props[k]); }
-    });
-    (enfants || []).forEach(function (c) { e.appendChild(c); });
-    return e;
-  }
-
-  function dejaVu(role) { try { return localStorage.getItem("pg_aide_" + role) === "1"; } catch (e) { return true; } }
-  function marquerVu(role) { try { localStorage.setItem("pg_aide_" + role, "1"); } catch (e) { /* facultatif */ } }
-
-  /* =========================================================
-     FENÊTRE D'AIDE
-     ========================================================= */
-  function demarrer() {
-    var role = document.body.getAttribute("data-aide");
-    if (!role || !AIDE[role]) { return; }
-    if (typeof HTMLDialogElement === "undefined") { return; }
-
-    var bouton = el("button", { type: "button", "class": "aide-btn", "aria-label": "Ouvrir l'aide", text: "?" });
-    var boite = el("dialog", { "class": "aide-dialog", "aria-labelledby": "aideTitre" });
-    document.body.appendChild(bouton);
-    document.body.appendChild(boite);
-
-    function afficher(roleAffiche) {
-      var a = AIDE[roleAffiche];
-      boite.replaceChildren();
-      var tete = el("div", { "class": "aide-tete" }, [el("h2", { id: "aideTitre", text: a.titre })]);
-      var fermer = el("button", { type: "button", "class": "btn btn-ghost btn-small", text: "Fermer" });
-      fermer.addEventListener("click", function () { boite.close(); });
-      tete.appendChild(fermer);
-      boite.appendChild(tete);
-
-      if (role === "patron") {   // le patron peut lire l'aide des autres rôles (formation du personnel)
-        var choix = el("select", { "aria-label": "Aide de quel rôle ?" }, Object.keys(AIDE).map(function (r) {
-          var o = el("option", { value: r, text: AIDE[r].titre });
-          if (r === roleAffiche) { o.selected = true; }
-          return o;
-        }));
-        choix.addEventListener("change", function () { afficher(choix.value); });
-        boite.appendChild(el("div", { "class": "aide-choix" }, [choix]));
-      }
-
-      boite.appendChild(el("h3", { text: "Pas à pas" }));
-      boite.appendChild(el("ol", { "class": "aide-etapes" }, a.etapes.map(function (t) { return el("li", { text: t }); })));
-      boite.appendChild(el("h3", { text: "Questions fréquentes" }));
-      a.questions.forEach(function (q) {
-        boite.appendChild(el("details", { "class": "aide-q" }, [el("summary", { text: q[0] }), el("p", { text: q[1] })]));
-      });
-      afficherSections(a);
-    }
-
-    function afficherSections(a) {
-      if (!a.sections) { return; }
-      boite.appendChild(el("h3", { text: "Gérer le personnel (comptes et accès)" }));
-      a.sections.forEach(function (sec) {
-        var liste = el("ol", { "class": "aide-etapes aide-etapes-int" });
-        sec[1].forEach(function (e) {
-          var li = el("li", { text: typeof e === "string" ? e : e.t });
-          if (typeof e !== "string" && e.sql) {
-            var copier = el("button", { type: "button", "class": "btn btn-ghost btn-small", text: "Copier le texte" });
-            copier.addEventListener("click", function () {
-              try { navigator.clipboard.writeText(e.sql).then(function () { copier.textContent = "Copié ✓"; }); }
-              catch (x) { copier.textContent = "Sélectionnez le texte à la main"; }
-            });
-            li.appendChild(el("pre", { "class": "aide-sql", text: e.sql }));
-            li.appendChild(copier);
-          }
-          liste.appendChild(li);
-        });
-        boite.appendChild(el("details", { "class": "aide-q" }, [el("summary", { text: sec[0] }), liste]));
-      });
-    }
-
-    function ouvrir() { afficher(role); if (!boite.open) { boite.showModal(); } marquerVu(role); }
-    bouton.addEventListener("click", ouvrir);
-    boite.addEventListener("click", function (e) { if (e.target === boite) { boite.close(); } });   // clic à côté = fermer
-
-    if (!dejaVu(role)) { setTimeout(ouvrir, 1200); }   // première visite : le guide s'ouvre seul
-  }
-
-  if (document.readyState === "loading") { document.addEventListener("DOMContentLoaded", demarrer); }
-  else { demarrer(); }
+  /* Le bouton « ? » et la fenêtre d'aide ont été retirés : l'assistant IA les remplace.
+     Ce fichier ne sert plus qu'à fournir les textes ci-dessus à l'assistant (assistant.js). */
 })();
