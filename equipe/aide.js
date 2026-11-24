@@ -101,6 +101,7 @@
       ]
     }
   };
+  window.AIDE_DATA = AIDE; // rendu accessible à l'assistant IA (assistant.js)
 
   /* =========================================================
      OUTILS
