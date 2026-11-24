@@ -15,6 +15,7 @@ a{color:inherit}.wrap{max-width:960px;margin:0 auto;padding:0 1.25rem}
 .cta{display:flex;flex-wrap:wrap;gap:.7rem;justify-content:center}
 .btn{display:inline-block;padding:.7rem 1.3rem;border:2px solid var(--or);border-radius:999px;text-decoration:none;font-weight:600;color:var(--creme)}
 .btn.gold{background:var(--or);color:#2a0505}.btn:hover,.btn:focus-visible{outline:3px solid var(--creme);outline-offset:2px}
+.btn[hidden]{display:none}
 .chips{position:sticky;top:52px;z-index:4;display:flex;gap:.5rem;overflow-x:auto;padding:.6rem 1.25rem;background:rgba(36,6,6,.94);scrollbar-width:thin}
 .chips a{flex:none;padding:.35rem .9rem;border:1px solid var(--or);border-radius:999px;text-decoration:none;font-size:.9rem;white-space:nowrap}
 .chips a:hover{background:var(--or);color:#2a0505}
