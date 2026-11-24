@@ -25,9 +25,13 @@
   if (btn) {
     btn.addEventListener("click", async function () {
       if (!evenementDiffere) { return; }
-      btn.hidden = true;
       evenementDiffere.prompt();
-      await evenementDiffere.userChoice;
+      var choix = await evenementDiffere.userChoice;
+      // On cache le bouton dès que la personne confirme, sans attendre l'évènement "appinstalled"
+      // qui n'est pas toujours déclenché de façon fiable sur tous les navigateurs.
+      if (choix && choix.outcome === "accepted") {
+        btn.hidden = true;
+      }
       evenementDiffere = null;
     });
   }
