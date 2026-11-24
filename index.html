@@ -10,13 +10,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#340a0c">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="theme-color" content="#240606">
+<link rel="apple-touch-icon" href="icon-192.png">
 </head>
 <body>
 <header class="top">
-  <a class="brand" href="#haut" aria-label="Porto Grill, haut de page">Porto Grill</a>
-  <nav aria-label="Navigation"><a href="#carte">Carte</a><a href="#services">Services</a><a href="#reservation">Réserver</a><a href="#contact">Contact</a></nav>
+  <a class="brand" href="#haut" aria-label="Porto Grill, haut de page"><img src="img/logo.jpg" width="34" height="34" alt="">Porto Grill</a>
+  <nav aria-label="Navigation"><a href="#carte">Carte</a><a href="#services">Services</a><a href="#contact">Contact</a><a class="btn gold btn-nav" href="#reservation">Réserver une table</a></nav>
 </header>
 <main id="haut">
   <section class="hero">
@@ -24,7 +24,7 @@
     <h1>Restaurant Porto Grill</h1>
     <p class="cover"><span>Carte</span><b>MENU</b></p>
     <p class="welcome">Soyez les bienvenus à Porto-Novo, Bd du Cinquantenaire.</p>
-    <p class="cta"><a class="btn gold" href="#carte">Voir la carte</a><a class="btn" href="#reservation">Réserver une table</a><a class="btn" href="https://wa.me/2290161183716?text=Bonjour%20Porto%20Grill%2C%20je%20voudrais%20commander." target="_blank" rel="noopener">Commander sur WhatsApp</a></p>
+    <p class="cta"><a class="btn gold" href="#carte">Voir la carte</a><a class="btn" href="#reservation">Réserver une table</a><a class="btn" href="https://wa.me/2290161183716?text=Bonjour%20Porto%20Grill%2C%20je%20voudrais%20commander." target="_blank" rel="noopener">Commander sur WhatsApp</a><button class="btn gold" type="button" id="installBtn" hidden>📲 Installer l’application</button></p>
   </section>
   <nav class="chips" id="chips" aria-label="Catégories de la carte"></nav>
   <div id="carte"></div>
@@ -85,15 +85,38 @@
     </div>
   </section>
 </main>
-<footer><p>© Porto Grill, Porto-Novo · <a href="equipe/connexion.html">Espace équipe</a></p></footer>
+<footer class="site-footer">
+  <div class="foot-cols">
+    <div class="foot-col foot-about">
+      <p class="foot-brand"><img src="img/logo.jpg" width="30" height="30" alt="">Porto Grill</p>
+      <p>Restaurant, grillades &amp; lounge à Porto-Novo. Carte béninoise et internationale, livraison et service traiteur.</p>
+    </div>
+    <div class="foot-col">
+      <h3>Liens rapides</h3>
+      <a href="#haut">Accueil</a>
+      <a href="#carte">Carte</a>
+      <a href="#services">Services</a>
+      <a href="#reservation">Réserver une table</a>
+    </div>
+    <div class="foot-col">
+      <h3>Informations</h3>
+      <a href="#contact">Contact</a>
+      <a href="https://www.google.com/maps/search/?api=1&amp;query=GJ64%2B9R+Porto-Novo" target="_blank" rel="noopener">Nous trouver</a>
+      <a href="equipe/connexion.html">Espace équipe</a>
+    </div>
+    <div class="foot-col foot-contact">
+      <h3>Contact</h3>
+      <p><a href="tel:0161183716">01 61 18 37 16</a></p>
+      <p><a href="https://wa.me/2290161183716" target="_blank" rel="noopener">WhatsApp</a></p>
+      <p>Bd du Cinquantenaire,<br>Porto-Novo</p>
+    </div>
+  </div>
+  <p class="foot-bottom">© Porto Grill, Porto-Novo</p>
+</footer>
 <nav class="float" aria-label="Actions rapides"><a href="tel:0161183716">Appeler</a><a href="https://wa.me/2290161183716" target="_blank" rel="noopener">WhatsApp</a><a href="#reservation">Réserver</a></nav>
+<script src="install.js"></script>
 <script src="menu.js"></script>
 <script src="reservations.js"></script>
 <script src="script.js"></script>
-<script>
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("sw.js");
-  }
-</script>
 </body>
 </html>
