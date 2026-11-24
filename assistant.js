@@ -126,8 +126,17 @@
     panneau.appendChild(tete);
     panneau.appendChild(fil);
     panneau.appendChild(form);
-    document.body.appendChild(bulle);
     document.body.appendChild(panneau);
+    // Site public : la bulle se range dans la barre du bas, juste après « Appeler ».
+    var barre = document.body.getAttribute("data-aide") === "client" ? document.querySelector("nav.float") : null;
+    if (barre) {
+      bulle.classList.add("assist-bulle-barre");
+      var appeler = barre.querySelector("a");
+      if (appeler && appeler.nextSibling) { barre.insertBefore(bulle, appeler.nextSibling); }
+      else { barre.appendChild(bulle); }
+    } else {
+      document.body.appendChild(bulle);
+    }
 
     var historique = [];
     var enCours = false;
