@@ -14,5 +14,5 @@
    c'est pour ça que l'étape 4 ci-dessus est importante, pas facultative.
    ========================================================= */
 window.AI_CONFIG = {
-  cle: "METS_TA_CLE_GEMINI_ICI"
+  cle: "AQ.Ab8RN6LWMvxDeXrSiTQOgamI7oAp-4s7e601L_2mSaRYL8FX8A"
 };
