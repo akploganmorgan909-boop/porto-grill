@@ -7,7 +7,11 @@
 (function () {
   "use strict";
 
-  var MODELE = "gemini-3.5-flash-lite";
+  // Modèles essayés dans l'ordre (le premier qui répond est gardé).
+  var MODELES = ["gemini-3.5-flash-lite", "gemini-3.1-flash-lite", "gemini-2.5-flash", "gemini-2.5-flash-lite"];
+  var modeleOk = "";
+  // Mettre false quand tout fonctionne : cache le détail technique affiché sous l'erreur.
+  var DIAGNOSTIC = true;
   var MAX_ECHANGES = 8; // on ne garde que les derniers échanges, pour rester dans le niveau gratuit
 
   function el(tag, props, enfants) {
@@ -82,27 +86,46 @@
     if (!cle || cle.indexOf("METS_TA_CLE") === 0) {
       throw new Error("CLE_MANQUANTE");
     }
-    var url = "https://generativelanguage.googleapis.com/v1beta/models/" + MODELE + ":generateContent?key=" + encodeURIComponent(cle);
-    var reponse = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        system_instruction: { parts: [{ text: systeme }] },
-        contents: historique,
-        generationConfig: { maxOutputTokens: 350, temperature: 0.4 }
-      })
+    var corps = JSON.stringify({
+      system_instruction: { parts: [{ text: systeme }] },
+      contents: historique,
+      generationConfig: { maxOutputTokens: 1024, temperature: 0.4 }
     });
-    if (!reponse.ok) {
-      // Détail technique dans la console du navigateur (F12), pour aider au diagnostic.
-      try { console.warn("Assistant IA : erreur Google", reponse.status, await reponse.clone().text()); } catch (e2) { /* rien */ }
+    var dernier = "";
+    // On essaie les modèles dans l'ordre ; si l'un est introuvable ou refusé, on passe au suivant.
+    var ordre = [modeleOk].concat(MODELES.filter(function (m) { return m !== modeleOk; })).filter(Boolean);
+    for (var i = 0; i < ordre.length; i++) {
+      var reponse;
+      try {
+        reponse = await fetch(
+          "https://generativelanguage.googleapis.com/v1beta/models/" + ordre[i] + ":generateContent?key=" + encodeURIComponent(cle),
+          { method: "POST", headers: { "Content-Type": "application/json" }, body: corps }
+        );
+      } catch (e) {
+        dernier = "réseau : " + (e && e.message ? e.message : "échec");
+        console.warn("Assistant IA : appel impossible", ordre[i], e);
+        continue;
+      }
+      if (reponse.ok) {
+        var data = await reponse.json();
+        var texte = data && data.candidates && data.candidates[0] && data.candidates[0].content &&
+          data.candidates[0].content.parts && data.candidates[0].content.parts[0] && data.candidates[0].content.parts[0].text;
+        if (!texte) { dernier = ordre[i] + " : réponse vide"; continue; }
+        modeleOk = ordre[i];
+        return texte.trim();
+      }
+      var detail = "";
+      try { detail = await reponse.text(); } catch (e3) { /* rien */ }
+      console.warn("Assistant IA : erreur Google", ordre[i], reponse.status, detail);
+      var court = "";
+      try { court = (JSON.parse(detail).error || {}).message || ""; } catch (e4) { court = detail.slice(0, 120); }
+      dernier = ordre[i] + " → " + reponse.status + (court ? " : " + court.slice(0, 140) : "");
       if (reponse.status === 429) { throw new Error("QUOTA"); }
-      throw new Error("RESEAU");
+      if (/API key not valid|API_KEY_INVALID|API key expired/i.test(detail)) { break; } // inutile d'essayer un autre modèle
     }
-    var data = await reponse.json();
-    var texte = data && data.candidates && data.candidates[0] && data.candidates[0].content &&
-      data.candidates[0].content.parts && data.candidates[0].content.parts[0] && data.candidates[0].content.parts[0].text;
-    if (!texte) { throw new Error("VIDE"); }
-    return texte.trim();
+    var err = new Error("RESEAU");
+    err.detail = dernier;
+    throw err;
   }
 
   /* =========================================================
@@ -191,6 +214,7 @@
           RESEAU: "Je n'arrive pas à répondre pour l'instant (connexion). Réessayez dans un instant.",
           VIDE: "Je n'ai pas pu formuler de réponse, pouvez-vous reformuler votre question ?"
         }[err.message] || "Une erreur est survenue. Réessayez dans un instant.";
+        if (DIAGNOSTIC && err && err.detail) { msg += "\n[Détail technique : " + err.detail + "]"; }
         ligne(msg, "ia");
       } finally {
         enCours = false;
