@@ -81,51 +81,30 @@
   /* =========================================================
      APPEL À L'IA (Google Gemini)
      ========================================================= */
+var URL_ASSISTANT = "https://mjzyatbvfucfaoyrthqb.supabase.co/functions/v1/bright-function";
+
   async function demanderIA(systeme, historique) {
-    var cle = window.AI_CONFIG && window.AI_CONFIG.cle;
-    if (!cle || cle.indexOf("METS_TA_CLE") === 0) {
-      throw new Error("CLE_MANQUANTE");
+    var reponse;
+    try {
+      reponse = await fetch(URL_ASSISTANT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ systeme: systeme, contents: historique })
+      });
+    } catch (e) {
+      var errReseau = new Error("RESEAU");
+      errReseau.detail = "réseau : " + (e && e.message ? e.message : "échec");
+      throw errReseau;
     }
-    var corps = JSON.stringify({
-      system_instruction: { parts: [{ text: systeme }] },
-      contents: historique,
-      generationConfig: { maxOutputTokens: 1024, temperature: 0.4 }
-    });
-    var dernier = "";
-    // On essaie les modèles dans l'ordre ; si l'un est introuvable ou refusé, on passe au suivant.
-    var ordre = [modeleOk].concat(MODELES.filter(function (m) { return m !== modeleOk; })).filter(Boolean);
-    for (var i = 0; i < ordre.length; i++) {
-      var reponse;
-      try {
-        reponse = await fetch(
-          "https://generativelanguage.googleapis.com/v1beta/models/" + ordre[i] + ":generateContent?key=" + encodeURIComponent(cle),
-          { method: "POST", headers: { "Content-Type": "application/json" }, body: corps }
-        );
-      } catch (e) {
-        dernier = "réseau : " + (e && e.message ? e.message : "échec");
-        console.warn("Assistant IA : appel impossible", ordre[i], e);
-        continue;
-      }
-      if (reponse.ok) {
-        var data = await reponse.json();
-        var texte = data && data.candidates && data.candidates[0] && data.candidates[0].content &&
-          data.candidates[0].content.parts && data.candidates[0].content.parts[0] && data.candidates[0].content.parts[0].text;
-        if (!texte) { dernier = ordre[i] + " : réponse vide"; continue; }
-        modeleOk = ordre[i];
-        return texte.trim();
-      }
-      var detail = "";
-      try { detail = await reponse.text(); } catch (e3) { /* rien */ }
-      console.warn("Assistant IA : erreur Google", ordre[i], reponse.status, detail);
-      var court = "";
-      try { court = (JSON.parse(detail).error || {}).message || ""; } catch (e4) { court = detail.slice(0, 120); }
-      dernier = ordre[i] + " → " + reponse.status + (court ? " : " + court.slice(0, 140) : "");
-      if (reponse.status === 429) { throw new Error("QUOTA"); }
-      if (/API key not valid|API_KEY_INVALID|API key expired/i.test(detail)) { break; } // inutile d'essayer un autre modèle
+    if (reponse.status === 429) { throw new Error("QUOTA"); }
+    var data = {};
+    try { data = await reponse.json(); } catch (e2) { /* rien */ }
+    if (!reponse.ok || !data.reply) {
+      var err = new Error("RESEAU");
+      err.detail = reponse.status + (data.detail ? " : " + data.detail : "");
+      throw err;
     }
-    var err = new Error("RESEAU");
-    err.detail = dernier;
-    throw err;
+    return data.reply;
   }
 
   /* =========================================================
