@@ -108,7 +108,8 @@
      ========================================================= */
   function demarrer(systeme) {
     var bulle = el("button", { type: "button", "class": "assist-bulle", "aria-label": "Ouvrir l'assistant" }, [
-      el("span", { "class": "assist-bulle-icone", text: "💬" })
+      el("span", { "class": "assist-bulle-icone", text: "💬" }),
+      el("span", { "class": "assist-bulle-texte", text: "Assistant IA" })
     ]);
     var panneau = el("div", { "class": "assist-panneau", role: "dialog", "aria-label": "Assistant", hidden: "hidden" });
     var tete = el("div", { "class": "assist-tete" }, [
@@ -128,16 +129,16 @@
     panneau.appendChild(fil);
     panneau.appendChild(form);
     document.body.appendChild(panneau);
-    // Site public : la bulle se range dans la barre du bas, juste après « Appeler ».
+    // Toujours flottant. Sur le site public en version téléphone, on le monte au-dessus de la barre du bas.
+    document.body.appendChild(bulle);
     var barre = document.body.getAttribute("data-aide") === "client" ? document.querySelector("nav.float") : null;
-    if (barre) {
-      bulle.classList.add("assist-bulle-barre");
-      var appeler = barre.querySelector("a");
-      if (appeler && appeler.nextSibling) { barre.insertBefore(bulle, appeler.nextSibling); }
-      else { barre.appendChild(bulle); }
-    } else {
-      document.body.appendChild(bulle);
+    function placer() {
+      var barreVisible = !!barre && window.getComputedStyle(barre).display !== "none";
+      bulle.classList.toggle("assist-avec-barre", barreVisible);
+      panneau.classList.toggle("assist-avec-barre", barreVisible);
     }
+    placer();
+    if (barre) { window.addEventListener("resize", placer); }
 
     var historique = [];
     var enCours = false;

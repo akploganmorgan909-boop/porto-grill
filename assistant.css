@@ -49,13 +49,21 @@
   .assist-bulle{right:1.6rem;bottom:1.6rem}
 }
 
-/* Site public : bulle intégrée à la barre du bas, à côté de « Appeler » */
-.assist-bulle.assist-bulle-barre{
-  position:static;right:auto;bottom:auto;z-index:auto;
-  width:auto;height:auto;min-width:2.6rem;border-radius:999px;padding:.45rem .8rem;
-  font-size:1.15rem;box-shadow:none;flex:0 0 auto;
-}
-
 /* Espace équipe : le bouton d'aide « ? » passe à gauche, l'assistant reste à droite */
 .aide-btn{left:1.1rem !important;right:auto !important}
 @media (min-width:480px){ .aide-btn{left:1.6rem !important} }
+
+/* Site public sur téléphone : la fenêtre de chat se pose AU-DESSUS de la barre du bas,
+   pour que le champ de saisie et le bouton « Envoyer » restent visibles. */
+.assist-panneau.assist-avec-barre{
+  z-index:200;bottom:5rem;
+  max-height:calc(100vh - 6.5rem);max-height:calc(100dvh - 6.5rem);
+}
+
+/* Bulle en forme de pilule, avec le texte « Assistant IA » pour que tout le monde comprenne */
+.assist-bulle{width:auto;height:auto;border-radius:999px;padding:.7rem 1.1rem;gap:.45rem;font-size:1rem}
+.assist-bulle-icone{font-size:1.35rem;line-height:1}
+.assist-bulle-texte{font-weight:700;font-size:.95rem;white-space:nowrap}
+
+/* Site public sur téléphone : bulle posée au-dessus de la barre du bas (Appeler / WhatsApp / Réserver) */
+.assist-bulle.assist-avec-barre{bottom:5rem;z-index:200}
