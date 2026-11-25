@@ -81,14 +81,28 @@
   /* =========================================================
      APPEL À L'IA (Google Gemini)
      ========================================================= */
-var URL_ASSISTANT = "https://mjzyatbvfucfaoyrthqb.supabase.co/functions/v1/bright-function";
+var BASE_FONCTIONS = "https://mjzyatbvfucfaoyrthqb.supabase.co/functions/v1/";
+
+  function estClient() { return document.body.getAttribute("data-aide") === "client"; }
+
+  function enTetes() {
+    var h = { "Content-Type": "application/json" };
+    if (!estClient()) {
+      try {
+        var brut = localStorage.getItem("sb-mjzyatbvfucfaoyrthqb-auth-token");
+        var session = brut ? JSON.parse(brut) : null;
+        if (session && session.access_token) { h["Authorization"] = "Bearer " + session.access_token; }
+      } catch (e) { /* pas de session lisible */ }
+    }
+    return h;
+  }
 
   async function demanderIA(systeme, historique) {
     var reponse;
     try {
-      reponse = await fetch(URL_ASSISTANT, {
+      reponse = await fetch(BASE_FONCTIONS + (estClient() ? "bright-function" : "assistant-equipe"), {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: enTetes(),
         body: JSON.stringify({ systeme: systeme, contents: historique })
       });
     } catch (e) {
