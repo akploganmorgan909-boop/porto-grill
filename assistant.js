@@ -7,7 +7,7 @@
 (function () {
   "use strict";
 
-  var MODELE = "gemini-2.0-flash";
+  var MODELE = "gemini-3.5-flash-lite";
   var MAX_ECHANGES = 8; // on ne garde que les derniers échanges, pour rester dans le niveau gratuit
 
   function el(tag, props, enfants) {
@@ -93,6 +93,8 @@
       })
     });
     if (!reponse.ok) {
+      // Détail technique dans la console du navigateur (F12), pour aider au diagnostic.
+      try { console.warn("Assistant IA : erreur Google", reponse.status, await reponse.clone().text()); } catch (e2) { /* rien */ }
       if (reponse.status === 429) { throw new Error("QUOTA"); }
       throw new Error("RESEAU");
     }
